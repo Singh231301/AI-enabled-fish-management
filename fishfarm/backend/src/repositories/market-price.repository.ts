@@ -1,13 +1,42 @@
 import { PrismaClient, Prisma, MarketPrice } from '@prisma/client';
 import { BaseRepository } from './base.repository';
+import { subMonths } from 'date-fns';
 
 export class MarketPriceRepository extends BaseRepository<MarketPrice> {
   constructor(prisma: PrismaClient) {
-    super(prisma);
+    super(prisma, 'marketPrice');
   }
 
-  async findById(id: string): Promise<MarketPrice | null> {
-    return this.prisma.marketPrice.findUnique({ where: { id } });
+  async findByPondId(pondId: string): Promise<MarketPrice[]> {
+    return this.prisma.marketPrice.findMany({
+      where: { pondId },
+      orderBy: { priceDate: 'desc' }
+    });
+  }
+
+  async findLatestBySpecies(
+    pondId: string,
+    species: string
+  ): Promise<MarketPrice | null> {
+    return this.prisma.marketPrice.findFirst({
+      where: { pondId, species },
+      orderBy: { priceDate: 'desc' }
+    });
+  }
+
+  async getPriceTrend(
+    pondId: string,
+    species: string,
+    months: number
+  ): Promise<MarketPrice[]> {
+    return this.prisma.marketPrice.findMany({
+      where: {
+        pondId,
+        species,
+        priceDate: { gte: subMonths(new Date(), months) }
+      },
+      orderBy: { priceDate: 'asc' }
+    });
   }
 
   async create(data: Prisma.MarketPriceCreateInput): Promise<MarketPrice> {
@@ -20,9 +49,5 @@ export class MarketPriceRepository extends BaseRepository<MarketPrice> {
 
   async delete(id: string): Promise<MarketPrice> {
     return this.prisma.marketPrice.delete({ where: { id } });
-  }
-
-  async findAll(filters?: Partial<MarketPrice>): Promise<MarketPrice[]> {
-    return this.prisma.marketPrice.findMany({ where: filters as any });
   }
 }

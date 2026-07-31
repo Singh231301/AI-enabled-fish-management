@@ -31,6 +31,12 @@ import { WaterQualityLogRepository } from './repositories/water-quality-log.repo
 import { WaterTreatmentLogRepository } from './repositories/water-treatment-log.repository';
 import { WaterService } from './services/water.service';
 import { WaterController } from './controllers/water.controller';
+import { ExpenseRepository } from './repositories/expense.repository';
+import { SaleRepository } from './repositories/sale.repository';
+import { MarketPriceRepository } from './repositories/market-price.repository';
+import { BudgetRepository } from './repositories/budget.repository';
+import { FinancialService } from './services/financials.service';
+import { FinancialsController } from './controllers/financials.controller';
 
 // 1. Repositories
 const userRepo = new UserRepository(prisma);
@@ -46,6 +52,10 @@ const feedingLogRepo = new FeedingLogRepository(prisma);
 const feedingScheduleRepo = new FeedingScheduleRepository(prisma);
 const waterQualityRepo = new WaterQualityLogRepository(prisma);
 const waterTreatmentRepo = new WaterTreatmentLogRepository(prisma);
+const expenseRepo = new ExpenseRepository(prisma);
+const saleRepo = new SaleRepository(prisma);
+const marketPriceRepo = new MarketPriceRepository(prisma);
+const budgetRepo = new BudgetRepository(prisma);
 
 // 2. Services
 const authService = new AuthService(userRepo, activityLogRepo);
@@ -66,6 +76,19 @@ const waterService = new WaterService(
   notificationService
 );
 
+const financialService = new FinancialService(
+  expenseRepo,
+  saleRepo,
+  marketPriceRepo,
+  budgetRepo,
+  pondRepo,
+  fishStockingRepo,
+  fishGrowthRepo,
+  mortalityLogRepo,
+  activityLogRepo,
+  notificationService
+);
+
 const schedulerService = new SchedulerService(feedingScheduleRepo, feedingLogRepo, notificationService);
 schedulerService.start();
 
@@ -77,3 +100,4 @@ export const pondController = new PondController(pondService);
 export const fishController = new FishController(fishService);
 export const feedingController = new FeedingController(feedingService);
 export const waterController = new WaterController(waterService);
+export const financialsController = new FinancialsController(financialService);

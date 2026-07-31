@@ -11,6 +11,7 @@ import { Register } from './pages/Register';
 import { FishPage } from './pages/dashboard/FishPage';
 import { FeedingPage } from './pages/dashboard/FeedingPage';
 import { WaterPage } from './pages/dashboard/WaterPage';
+import { FinancialsPage } from './pages/dashboard/FinancialsPage';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path="fish" element={<FishPage />} />
               <Route path="feeding" element={<FeedingPage />} />
               <Route path="water" element={<WaterPage />} />
+              <Route path="financials" element={<FinancialsPage />} />
               
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />

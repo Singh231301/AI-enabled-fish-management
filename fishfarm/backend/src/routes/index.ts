@@ -6,6 +6,7 @@ import { pondRouter } from './pond.routes';
 import fishRouter from './fish.routes';
 import feedingRouter from './feeding.routes';
 import waterRouter from './water.routes';
+import { financialsRoutes } from './financials.routes';
 
 export const routes = Router();
 
@@ -16,5 +17,4 @@ routes.use('/ponds', pondRouter);
 routes.use('/fish', fishRouter);
 routes.use('/feeding', feedingRouter);
 routes.use('/water', waterRouter);
-
-// Other routers will be mounted here
+routes.use('/financials', financialsRoutes);
