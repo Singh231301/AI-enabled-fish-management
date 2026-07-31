@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# TypeScript incremental builds
+*.tsbuildinfo
+
+# Prisma generated/local artifacts
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+backend/prisma/migrations/migration_lock.toml
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+

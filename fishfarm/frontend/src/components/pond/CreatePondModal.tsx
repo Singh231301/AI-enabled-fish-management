@@ -1,0 +1,292 @@
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Modal } from '../common/Modal';
+import { pondApi } from '../../api/endpoints/pond.api';
+import { CreatePondForm, PondWithFullDetails } from '../../types/pond.types';
+import toast from 'react-hot-toast';
+
+const createPondSchema = z.object({
+  name: z.string().min(2, "Pond name required").max(100).trim(),
+  location: z.string().min(3, "Location required").max(200).trim(),
+  lengthFt: z.number({ required_error: "Length required", invalid_type_error: "Must be a number" })
+    .positive("Must be positive").max(10000),
+  widthFt: z.number({ required_error: "Width required", invalid_type_error: "Must be a number" })
+    .positive("Must be positive").max(10000),
+  maxDepthFt: z.number({ required_error: "Depth required", invalid_type_error: "Must be a number" })
+    .positive("Must be positive").max(100),
+  soilType: z.string().min(2, "Soil type required"),
+  waterSource: z.string().min(2, "Water source required"),
+  pondType: z.string().default("Earthen"),
+  constructionDate: z.string().optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+interface CreatePondModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: (pond: PondWithFullDetails) => void;
+}
+
+export const CreatePondModal: React.FC<CreatePondModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [waterSources, setWaterSources] = useState<string[]>(['Rainwater', 'Tube Well']);
+
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<CreatePondForm>({
+    resolver: zodResolver(createPondSchema),
+    defaultValues: {
+      pondType: 'Earthen',
+      soilType: 'Whitish/Gravelly',
+      waterSource: 'Rainwater, Tube Well'
+    }
+  });
+
+  const length = watch('lengthFt');
+  const width = watch('widthFt');
+  
+  const areaSqft = (length && width && length > 0 && width > 0) ? length * width : 0;
+  const areaAcres = areaSqft / 43560;
+  const areaBigha = areaAcres * 4.84;
+
+  const toggleWaterSource = (source: string) => {
+    let newSources;
+    if (waterSources.includes(source)) {
+      newSources = waterSources.filter(s => s !== source);
+    } else {
+      newSources = [...waterSources, source];
+    }
+    setWaterSources(newSources);
+    setValue('waterSource', newSources.join(', '), { shouldValidate: true });
+  };
+
+  const onSubmit = async (data: CreatePondForm) => {
+    setIsSubmitting(true);
+    try {
+      const res = await pondApi.createPond(data);
+      if (res.success) {
+        toast.success("Pond created! 12 default infrastructure items have been added.");
+        onSuccess(res.data);
+        reset();
+        setWaterSources(['Rainwater', 'Tube Well']);
+        onClose();
+      } else {
+        toast.error(res.message || "Failed to create pond");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create pond");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    reset();
+    setWaterSources(['Rainwater', 'Tube Well']);
+    onClose();
+  };
+
+  const waterSourceOptions = ["Rainwater", "Tube Well", "River/Canal", "Spring", "Municipal"];
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} title="🏞️ Create New Pond" size="lg">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-4">
+        
+        {/* SECTION: Basic Information */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-sky-400 uppercase tracking-wider">Basic Information</h3>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Pond Name</label>
+            <input
+              {...register('name')}
+              type="text"
+              placeholder="e.g., Main Pond, North Pond"
+              className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+            />
+            {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Location</label>
+            <input
+              {...register('location')}
+              type="text"
+              placeholder="e.g., Ahraura, Mirzapur, Uttar Pradesh"
+              className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+            />
+            {errors.location && <p className="text-red-400 text-xs mt-1">{errors.location.message}</p>}
+          </div>
+        </div>
+
+        {/* SECTION: Dimensions */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-sky-400 uppercase tracking-wider">Pond Dimensions</h3>
+          </div>
+          <p className="text-sm text-slate-400">📐 Enter your pond measurements in feet</p>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Length (ft)</label>
+              <input
+                {...register('lengthFt', { valueAsNumber: true })}
+                type="number"
+                step="0.1"
+                placeholder="e.g., 131"
+                className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+              />
+              {errors.lengthFt && <p className="text-red-400 text-xs mt-1">{errors.lengthFt.message}</p>}
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Width (ft)</label>
+              <input
+                {...register('widthFt', { valueAsNumber: true })}
+                type="number"
+                step="0.1"
+                placeholder="e.g., 71"
+                className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+              />
+              {errors.widthFt && <p className="text-red-400 text-xs mt-1">{errors.widthFt.message}</p>}
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Max Depth (ft)</label>
+              <input
+                {...register('maxDepthFt', { valueAsNumber: true })}
+                type="number"
+                step="0.1"
+                placeholder="e.g., 6"
+                className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+              />
+              {errors.maxDepthFt && <p className="text-red-400 text-xs mt-1">{errors.maxDepthFt.message}</p>}
+            </div>
+          </div>
+          
+          {areaSqft > 0 && (
+            <div className="bg-sky-900/30 border border-sky-700 rounded-lg p-4 mt-2">
+              <h4 className="font-semibold text-sky-400 text-sm mb-1">📊 Calculated Area:</h4>
+              <p className="text-slate-200">
+                <span className="font-bold text-white">{new Intl.NumberFormat('en-IN').format(areaSqft)}</span> sq ft ≈ 
+                <span className="font-bold text-white ml-1">{areaAcres.toFixed(3)}</span> acres ≈ 
+                <span className="font-bold text-white ml-1">{areaBigha.toFixed(2)}</span> bigha*
+              </p>
+              <p className="text-xs text-slate-500 mt-1">(*approximate, 1 acre ≈ 4.84 bigha)</p>
+            </div>
+          )}
+        </div>
+
+        {/* SECTION: Pond Details */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-sky-400 uppercase tracking-wider">Pond Details</h3>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Soil Type</label>
+              <select
+                {...register('soilType')}
+                className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+              >
+                <option value="Clay">Clay</option>
+                <option value="Silty Clay">Silty Clay</option>
+                <option value="Sandy Clay">Sandy Clay</option>
+                <option value="Whitish/Gravelly">Whitish/Gravelly</option>
+                <option value="Loamy">Loamy</option>
+                <option value="Black Cotton">Black Cotton</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.soilType && <p className="text-red-400 text-xs mt-1">{errors.soilType.message}</p>}
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Pond Type</label>
+              <select
+                {...register('pondType')}
+                className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+              >
+                <option value="Earthen">Earthen</option>
+                <option value="Lined">Lined</option>
+                <option value="Concrete">Concrete</option>
+                <option value="Cage">Cage</option>
+                <option value="Tank">Tank</option>
+              </select>
+              {errors.pondType && <p className="text-red-400 text-xs mt-1">{errors.pondType.message}</p>}
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Water Source</label>
+            <div className="flex flex-wrap gap-2">
+              {waterSourceOptions.map(source => (
+                <button
+                  key={source}
+                  type="button"
+                  onClick={() => toggleWaterSource(source)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
+                    waterSources.includes(source)
+                      ? 'bg-sky-500/20 text-sky-400 border-sky-500/50'
+                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
+                  }`}
+                >
+                  {source}
+                </button>
+              ))}
+            </div>
+            <input type="hidden" {...register('waterSource')} />
+            {errors.waterSource && <p className="text-red-400 text-xs mt-1">{errors.waterSource.message}</p>}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Pond Established Date (optional)</label>
+            <input
+              {...register('constructionDate')}
+              type="date"
+              className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors"
+            />
+          </div>
+        </div>
+        
+        {/* SECTION: Notes */}
+        <div>
+          <details className="group">
+            <summary className="text-sky-400 text-sm font-medium cursor-pointer list-none flex items-center gap-1 mb-2">
+              <span className="group-open:hidden">Add Notes +</span>
+              <span className="hidden group-open:inline">Hide Notes -</span>
+            </summary>
+            <textarea
+              {...register('notes')}
+              rows={3}
+              placeholder="Any additional details about this pond..."
+              className="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-colors resize-none"
+            ></textarea>
+            {errors.notes && <p className="text-red-400 text-xs mt-1">{errors.notes.message}</p>}
+          </details>
+        </div>
+        
+        {/* FOOTER */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-6 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 font-medium transition-colors border border-transparent hover:border-slate-700"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-sky-500 hover:bg-sky-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Creating...
+              </>
+            ) : (
+              "Create Pond"
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};

@@ -1,0 +1,603 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENUMS ---
+
+enum UserRole {
+  ADMIN
+  VIEWER
+  HELPER
+}
+
+enum FishResponseType {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  REFUSED
+}
+
+enum WaterColor {
+  CLEAR
+  LIGHT_GREEN
+  DARK_GREEN
+  BROWN
+  CLOUDY
+  BLACK
+}
+
+enum WaterSmell {
+  NONE
+  MILD
+  STRONG
+  FOUL
+}
+
+enum DataSource {
+  MANUAL
+  SENSOR
+}
+
+enum ChemicalType {
+  AGRICULTURAL_LIME
+  QUICK_LIME
+  DOLOMITE
+  POTASSIUM_PERMANGANATE
+  BLEACHING_POWDER
+  SALT
+  PROBIOTIC
+  OTHER
+}
+
+enum ApplicationMethod {
+  BROADCAST
+  DISSOLVED_IN_WATER
+  SPOT_APPLICATION
+  INLET_WATER
+  OTHER
+}
+
+enum ExpenseCategory {
+  FINGERLINGS
+  FEED
+  CHEMICALS_LIME
+  EQUIPMENT
+  LABOR
+  FENCING_INFRASTRUCTURE
+  TRANSPORT
+  MISCELLANEOUS
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  COMPLETED
+}
+
+enum InventoryCategory {
+  FEED
+  CHEMICAL
+  EQUIPMENT
+  TOOL
+  OTHER
+}
+
+enum InventoryTransactionType {
+  PURCHASE
+  USAGE
+  ADJUSTMENT
+  WASTAGE
+}
+
+enum TaskCategory {
+  DAILY
+  WEEKLY
+  MONTHLY
+  SEASONAL
+  ONE_TIME
+  AI_GENERATED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+  OVERDUE
+}
+
+enum NotificationType {
+  TASK_DUE
+  TASK_OVERDUE
+  AI_ALERT
+  LOW_STOCK
+  FEEDING_REMINDER
+  MORTALITY_ALERT
+  WATER_QUALITY_ALERT
+  FINANCIAL_ALERT
+  WEATHER_ALERT
+  GROWTH_MILESTONE
+  INFO
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum BriefingType {
+  DAILY
+  WEEKLY
+  ALERT
+  CHAT
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+enum InfrastructureStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// --- MODELS ---
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  fullName     String
+  passwordHash String
+  role         UserRole @default(ADMIN)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ponds                  Pond[]
+  fishStockings          FishStocking[]
+  mortalityLogs          MortalityLog[]
+  feedingLogs            FeedingLog[]
+  feedingSchedules       FeedingSchedule[]
+  waterQualityLogs       WaterQualityLog[]
+  waterTreatmentLogs     WaterTreatmentLog[]
+  fishGrowthSamples      FishGrowthSample[]
+  expenses               Expense[]
+  sales                  Sale[]
+  marketPrices           MarketPrice[]
+  inventories            Inventory[]
+  inventoryTransactions  InventoryTransaction[]
+  tasks                  Task[]
+  assignedTasks          Task[]             @relation("AssignedTasks")
+  notifications          Notification[]
+  aiBriefings            AiBriefing[]
+  aiChatHistories        AiChatHistory[]
+  infrastructureItems    InfrastructureChecklist[]
+  activityLogs           ActivityLog[]
+
+  @@map("users")
+}
+
+model Pond {
+  id               String   @id @default(uuid())
+  userId           String
+  name             String
+  location         String
+  latitude         Float?
+  longitude        Float?
+  lengthFt         Float
+  widthFt          Float
+  areaSqft         Float
+  areaAcres        Float
+  maxDepthFt       Float
+  soilType         String
+  waterSource      String
+  pondType         String   @default("Earthen")
+  constructionDate DateTime?
+  notes            String?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user                    User                      @relation(fields: [userId], references: [id])
+  fishStockings           FishStocking[]
+  mortalityLogs           MortalityLog[]
+  feedingLogs             FeedingLog[]
+  feedingSchedule         FeedingSchedule?
+  waterQualityLogs        WaterQualityLog[]
+  waterTreatmentLogs      WaterTreatmentLog[]
+  fishGrowthSamples       FishGrowthSample[]
+  expenses                Expense[]
+  sales                   Sale[]
+  marketPrices            MarketPrice[]
+  inventories             Inventory[]
+  tasks                   Task[]
+  notifications           Notification[]
+  aiBriefings             AiBriefing[]
+  aiChatHistories         AiChatHistory[]
+  infrastructureItems     InfrastructureChecklist[]
+
+  @@map("ponds")
+}
+
+model FishStocking {
+  id                String   @id @default(uuid())
+  pondId            String
+  userId            String
+  stockingDate      DateTime
+  species           String
+  localName         String?
+  quantity          Int
+  fingerlingSize_cm Float
+  sourceSupplier    String?
+  costPerFingerling Float?
+  totalCost         Float?
+  batchNumber       Int      @default(1)
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("fish_stockings")
+}
+
+model MortalityLog {
+  id             String   @id @default(uuid())
+  pondId         String
+  userId         String
+  logDate        DateTime
+  deadCount      Int
+  probableReason String?
+  actionTaken    String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("mortality_logs")
+}
+
+model FeedingLog {
+  id                 String           @id @default(uuid())
+  pondId             String
+  userId             String
+  feedDate           DateTime
+  feedTime           String?
+  feedBrand          String?
+  feedType           String
+  quantityGrams      Float
+  finishTimeMinutes  Float?
+  leftoverObserved   Boolean          @default(false)
+  fishResponse       FishResponseType
+  notes              String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("feeding_logs")
+}
+
+model FeedingSchedule {
+  id              String   @id @default(uuid())
+  pondId          String   @unique
+  userId          String
+  morningTime     String?
+  eveningTime     String?
+  isActive        Boolean  @default(true)
+  reminderEnabled Boolean  @default(true)
+  feedsPerDay     Int      @default(2)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("feeding_schedules")
+}
+
+model WaterQualityLog {
+  id                   String     @id @default(uuid())
+  pondId               String
+  userId               String
+  logDate              DateTime
+  logTime              String?
+  phValue              Float?
+  waterLevelFt         Float?
+  waterColor           WaterColor
+  waterSmell           WaterSmell
+  temperatureCelsius   Float?
+  dissolvedOxygenPpm   Float?
+  turbidity            String?
+  dataSource           DataSource @default(MANUAL)
+  notes                String?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("water_quality_logs")
+}
+
+model WaterTreatmentLog {
+  id                String             @id @default(uuid())
+  pondId            String
+  userId            String
+  treatmentDate     DateTime
+  chemicalName      String
+  chemicalType      ChemicalType
+  quantityKg        Float
+  reason            String
+  applicationMethod ApplicationMethod?
+  phBefore          Float?
+  phAfter           Float?
+  resultObserved    String?
+  nextTreatmentDate DateTime?
+  notes             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("water_treatment_logs")
+}
+
+model FishGrowthSample {
+  id                 String   @id @default(uuid())
+  pondId             String
+  userId             String
+  sampleDate         DateTime
+  fishSampledCount   Int
+  averageWeightGrams Float
+  minWeightGrams     Float?
+  maxWeightGrams     Float?
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("fish_growth_samples")
+}
+
+model Expense {
+  id              String          @id @default(uuid())
+  pondId          String
+  userId          String
+  expenseDate     DateTime
+  category        ExpenseCategory
+  itemName        String
+  quantity        Float?
+  unit            String?
+  unitPrice       Float?
+  totalAmount     Float
+  paymentMethod   String?
+  notes           String?
+  receiptPhotoUrl String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("expenses")
+}
+
+model Sale {
+  id              String        @id @default(uuid())
+  pondId          String
+  userId          String
+  saleDate        DateTime
+  buyerName       String
+  buyerPhone      String?
+  fishQuantityKg  Float
+  pricePerKg      Float
+  totalAmount     Float
+  advanceReceived Float         @default(0)
+  balancePending  Float         @default(0)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sales")
+}
+
+model MarketPrice {
+  id               String   @id @default(uuid())
+  pondId           String
+  userId           String
+  priceDate        DateTime
+  species          String
+  pricePerKg       Float
+  marketLocation   String?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("market_prices")
+}
+
+model Inventory {
+  id                 String            @id @default(uuid())
+  pondId             String
+  userId             String
+  itemName           String
+  category           InventoryCategory
+  currentQuantity    Float
+  unit               String
+  reorderThreshold   Float
+  unitCost           Float?
+  lastRestockedDate  DateTime?
+  notes              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  pond         Pond                   @relation(fields: [pondId], references: [id])
+  user         User                   @relation(fields: [userId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@map("inventory")
+}
+
+model InventoryTransaction {
+  id              String                   @id @default(uuid())
+  inventoryId     String
+  userId          String
+  transactionType InventoryTransactionType
+  quantity        Float
+  unitCost        Float?
+  transactionDate DateTime
+  referenceNote   String?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("inventory_transactions")
+}
+
+model Task {
+  id                String       @id @default(uuid())
+  pondId            String?
+  userId            String
+  assignedToUserId  String?
+  title             String
+  description       String?
+  category          TaskCategory
+  priority          TaskPriority
+  status            TaskStatus   @default(PENDING)
+  dueDate           DateTime
+  completedDate     DateTime?
+  completionNote    String?
+  isRecurring       Boolean      @default(false)
+  recurrencePattern String?
+  nextDueDate       DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  pond       Pond? @relation(fields: [pondId], references: [id])
+  user       User  @relation(fields: [userId], references: [id])
+  assignedTo User? @relation("AssignedTasks", fields: [assignedToUserId], references: [id])
+
+  @@map("tasks")
+}
+
+model Notification {
+  id          String               @id @default(uuid())
+  userId      String
+  pondId      String?
+  title       String
+  message     String
+  type        NotificationType
+  priority    NotificationPriority @default(MEDIUM)
+  isRead      Boolean              @default(false)
+  isDismissed Boolean              @default(false)
+  actionUrl   String?
+  expiresAt   DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  user User  @relation(fields: [userId], references: [id])
+  pond Pond? @relation(fields: [pondId], references: [id])
+
+  @@map("notifications")
+}
+
+model AiBriefing {
+  id               String       @id @default(uuid())
+  pondId           String
+  userId           String
+  briefingDate     DateTime
+  briefingType     BriefingType
+  content          String
+  contextSnapshot  Json
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("ai_briefings")
+}
+
+model AiChatHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  pondId    String?
+  role      ChatRole
+  message   String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id])
+  pond Pond? @relation(fields: [pondId], references: [id])
+
+  @@map("ai_chat_history")
+}
+
+model InfrastructureChecklist {
+  id            String               @id @default(uuid())
+  pondId        String
+  userId        String
+  itemName      String
+  description   String?
+  status        InfrastructureStatus @default(NOT_STARTED)
+  completedDate DateTime?
+  notes         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  pond Pond @relation(fields: [pondId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("infrastructure_checklist")
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  module    String
+  recordId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
