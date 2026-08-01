@@ -5,7 +5,7 @@ import { format, subMonths } from 'date-fns';
 
 export class SaleRepository extends BaseRepository<Sale> {
   constructor(prisma: PrismaClient) {
-    super(prisma, 'sale');
+    super(prisma);
   }
 
   async findById(id: string): Promise<Sale | null> {

@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { feedingController } from '../container';
-import { requireAuth } from '../middlewares/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(authMiddleware);
 
 router.get('/overview', feedingController.getFeedingOverview);
 router.get('/today', feedingController.getTodayStatus);

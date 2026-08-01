@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { WaterService } from '../services/water.service';
-import { sendSuccess } from '../utils/response.util';
+import { InventoryService } from '../services/inventory.service';
+import { sendSuccess } from '../utils/response.utils';
 import {
   createWaterQualityLogSchema,
   updateWaterQualityLogSchema,
@@ -11,7 +12,10 @@ import {
 } from '../validators/water.validator';
 
 export class WaterController {
-  constructor(private readonly waterService: WaterService) {}
+  constructor(
+    private readonly waterService: WaterService,
+    private readonly inventoryService: InventoryService
+  ) {}
 
   public getWaterOverview = async (req: Request, res: Response) => {
     const pondId = req.query.pondId as string;
@@ -80,10 +84,27 @@ export class WaterController {
     return sendSuccess(res, null, "Log deleted");
   };
 
-  public createWaterTreatment = async (req: Request, res: Response) => {
-    const dto = createWaterTreatmentSchema.parse(req.body);
-    const treatment = await this.waterService.createWaterTreatment(dto, req.user!.id);
-    return sendSuccess(res, treatment, "Treatment logged", 201);
+  public createWaterTreatment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const dto = createWaterTreatmentSchema.parse(req.body);
+      const treatment = await this.waterService.createWaterTreatment(dto, req.user!.id);
+
+      // Auto-deduct from inventory (non-blocking)
+      this.inventoryService.autoDeductChemicalUsage(
+        dto.pondId,
+        req.user!.id,
+        treatment.id,
+        treatment.chemicalName,
+        treatment.quantityKg,
+        new Date(treatment.treatmentDate)
+      ).catch(err => {
+        console.warn('Inventory chemical auto-deduct failed:', err.message);
+      });
+
+      return sendSuccess(res, treatment, "Treatment logged successfully", 201);
+    } catch (error) {
+      next(error);
+    }
   };
 
   public getTreatmentLogs = async (req: Request, res: Response) => {

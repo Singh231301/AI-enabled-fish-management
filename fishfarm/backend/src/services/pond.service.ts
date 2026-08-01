@@ -3,6 +3,9 @@ import { PondRepository } from '../repositories/pond.repository';
 import { InfrastructureChecklistRepository } from '../repositories/infrastructure-checklist.repository';
 import { ActivityLogRepository } from '../repositories/activity-log.repository';
 import { NotificationRepository } from '../repositories/notification.repository';
+import { TaskRepository } from '../repositories/task.repository';
+import { TaskStatus, TaskPriority, TaskCategory } from '@prisma/client';
+import { addDays } from 'date-fns';
 import { 
   CreatePondDTO, 
   UpdatePondDTO, 
@@ -80,7 +83,8 @@ export class PondService {
     private pondRepo: PondRepository,
     private infraRepo: InfrastructureChecklistRepository,
     private activityRepo: ActivityLogRepository,
-    private notificationRepo: NotificationRepository
+    private notificationRepo: NotificationRepository,
+    private taskRepo: TaskRepository
   ) {}
 
   async createPond(dto: CreatePondDTO, userId: string): Promise<PondWithFullDetails> {
@@ -106,6 +110,97 @@ export class PondService {
       userId
     }));
     await this.infraRepo.bulkCreate(itemsToCreate as any);
+
+    // Seed default tasks
+    const today = new Date();
+    const defaultTasks = [
+      {
+        title: "Morning Feeding",
+        description: "Feed fish in the morning session. Observe fish response and log quantity fed.",
+        category: 'DAILY' as TaskCategory,
+        priority: 'HIGH' as TaskPriority,
+        status: 'PENDING' as TaskStatus,
+        dueDate: addDays(today, 0),
+        isRecurring: true,
+        recurrencePattern: 'DAILY',
+        recurrenceCount: 0,
+        tags: ['feeding', 'daily', 'critical'],
+        estimatedMinutes: 20,
+        userId: userId,
+        pondId: pond.id,
+        reminderDaysBefore: 1,
+        isAiGenerated: false
+      },
+      {
+        title: "Evening Feeding",
+        description: "Feed fish in the evening session. Log quantity and fish response in feeding module.",
+        category: 'DAILY' as TaskCategory,
+        priority: 'HIGH' as TaskPriority,
+        status: 'PENDING' as TaskStatus,
+        dueDate: addDays(today, 0),
+        isRecurring: true,
+        recurrencePattern: 'DAILY',
+        recurrenceCount: 0,
+        tags: ['feeding', 'daily', 'critical'],
+        estimatedMinutes: 20,
+        userId: userId,
+        pondId: pond.id,
+        reminderDaysBefore: 1,
+        isAiGenerated: false
+      },
+      {
+        title: "Fish Observation",
+        description: "Observe fish behavior: are they active, any surface gasping, unusual movements, dead fish? Log any observations in the system.",
+        category: 'DAILY' as TaskCategory,
+        priority: 'MEDIUM' as TaskPriority,
+        status: 'PENDING' as TaskStatus,
+        dueDate: addDays(today, 0),
+        isRecurring: true,
+        recurrencePattern: 'DAILY',
+        recurrenceCount: 0,
+        tags: ['observation', 'daily', 'health'],
+        estimatedMinutes: 10,
+        userId: userId,
+        pondId: pond.id,
+        reminderDaysBefore: 1,
+        isAiGenerated: false
+      },
+      {
+        title: "Inspect Pond Bunds",
+        description: "Walk around all pond bunds. Check for rat holes, crab holes, seepage, erosion. Fill any holes found immediately.",
+        category: 'WEEKLY' as TaskCategory,
+        priority: 'HIGH' as TaskPriority,
+        status: 'PENDING' as TaskStatus,
+        dueDate: addDays(today, 3),
+        isRecurring: true,
+        recurrencePattern: 'WEEKLY',
+        recurrenceCount: 0,
+        tags: ['infrastructure', 'weekly', 'bund'],
+        estimatedMinutes: 30,
+        userId: userId,
+        pondId: pond.id,
+        reminderDaysBefore: 1,
+        isAiGenerated: false
+      },
+      {
+        title: "Water Quality Check",
+        description: "Test pH using test kit. Observe water color, smell, and clarity. Log results in Water Quality module.",
+        category: 'WEEKLY' as TaskCategory,
+        priority: 'HIGH' as TaskPriority,
+        status: 'PENDING' as TaskStatus,
+        dueDate: addDays(today, 1),
+        isRecurring: true,
+        recurrencePattern: 'EVERY_2_DAYS',
+        recurrenceCount: 0,
+        tags: ['water', 'weekly', 'critical'],
+        estimatedMinutes: 15,
+        userId: userId,
+        pondId: pond.id,
+        reminderDaysBefore: 1,
+        isAiGenerated: false
+      }
+    ];
+    await this.taskRepo.createMany(defaultTasks as any);
 
     await this.activityRepo.create({
       userId,

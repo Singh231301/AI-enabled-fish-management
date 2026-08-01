@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { FinancialService } from '../services/financials.service';
-import { sendSuccess, sendPaginated } from '../utils/response.util';
-import { AppError } from '../middleware/error.middleware';
+import { sendSuccess, sendPaginated } from '../utils/response.utils';
+import { AppError } from '../utils/app-error';
 import { 
   createExpenseSchema, updateExpenseSchema, createSaleSchema, updateSaleSchema,
   recordPaymentSchema, createMarketPriceSchema, setBudgetSchema,
@@ -46,7 +46,7 @@ export class FinancialsController {
     try {
       const query = financialQuerySchema.parse(req.query);
       const { data, meta } = await this.financialService.getExpenses(query.pondId, req.user!.id, query);
-      sendPaginated(res, data, meta, 'Expenses retrieved');
+      sendPaginated(res, data, meta.total, meta.page, meta.limit, 'Expenses retrieved');
     } catch (error) {
       next(error);
     }
@@ -100,7 +100,7 @@ export class FinancialsController {
     try {
       const query = financialQuerySchema.parse(req.query);
       const { data, meta } = await this.financialService.getSales(query.pondId, req.user!.id, query);
-      sendPaginated(res, data, meta, 'Sales retrieved');
+      sendPaginated(res, data, meta.total, meta.page, meta.limit, 'Sales retrieved');
     } catch (error) {
       next(error);
     }

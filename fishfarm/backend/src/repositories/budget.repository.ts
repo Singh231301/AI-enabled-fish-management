@@ -3,7 +3,7 @@ import { BaseRepository } from './base.repository';
 
 export class BudgetRepository extends BaseRepository<Budget> {
   constructor(prisma: PrismaClient) {
-    super(prisma, 'budget');
+    super(prisma);
   }
 
   async findByPondIdAndMonth(

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { FeedingService } from '../services/feeding.service';
+import { InventoryService } from '../services/inventory.service';
 import { sendSuccess, sendPaginated } from '../utils/response.utils';
 import { 
   createFeedingLogSchema, 
@@ -10,12 +11,30 @@ import {
 } from '../validators/feeding.validator';
 
 export class FeedingController {
-  constructor(private feedingService: FeedingService) {}
+  constructor(
+    private feedingService: FeedingService,
+    private inventoryService: InventoryService
+  ) {}
 
   createFeedingLog = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const dto = createFeedingLogSchema.parse(req.body);
-      const log = await this.feedingService.createFeedingLog(dto, req.user!.id);
+      const body = createFeedingLogSchema.parse(req.body);
+      const log = await this.feedingService.createFeedingLog(body, req.user!.id);
+      
+      // Auto-deduct from inventory (non-blocking)
+      if (log.feedBrand) {
+        this.inventoryService.autoDeductFeedUsage(
+          body.pondId,
+          req.user!.id,
+          log.id,
+          log.feedBrand,
+          log.quantityGrams,
+          new Date(log.feedDate)
+        ).catch(err => {
+          console.warn('Inventory auto-deduct failed:', err.message);
+        });
+      }
+
       sendSuccess(res, log, "Feeding logged successfully", 201);
     } catch (error) {
       next(error);

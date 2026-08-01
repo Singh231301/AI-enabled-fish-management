@@ -63,13 +63,13 @@ export const FeedingCalendar: React.FC<FeedingCalendarProps> = ({
     for (let i = 0; i < 7; i++) {
       const cloneDay = day;
       const formattedDate = format(cloneDay, dateFormat);
-      const isCurrentMonth = isSameMonth(cloneDay, monthStart);
+      const isDayCurrentMonth = isSameMonth(cloneDay, monthStart);
       const isDayFuture = isFuture(cloneDay) && !isToday(cloneDay);
       const isDayToday = isToday(cloneDay);
       
       const dayData = trendMap.get(formattedDate);
       
-      if (isCurrentMonth && !isDayFuture) {
+      if (isSameMonth(cloneDay, monthStart) && !isDayFuture) {
         validDaysInMonth++;
         if (dayData && dayData.totalGrams > 0) {
           daysFedThisMonth++;
@@ -86,7 +86,7 @@ export const FeedingCalendar: React.FC<FeedingCalendarProps> = ({
 
       // Determine cell color
       let bgColor = 'bg-slate-800 opacity-30';
-      if (!isDayFuture && isCurrentMonth) {
+      if (!isDayFuture && isSameMonth(cloneDay, monthStart)) {
         if (!dayData || dayData.totalGrams === 0) {
           bgColor = 'bg-red-900/40 hover:bg-red-900/60';
         } else if (dayData.sessions === 1) {
@@ -105,7 +105,7 @@ export const FeedingCalendar: React.FC<FeedingCalendarProps> = ({
           title={dayData ? `${formattedDate} — ${dayData.totalGrams}g (${dayData.sessions} sessions)` : formattedDate}
           className={`
             relative w-8 h-8 sm:w-10 sm:h-10 rounded-md m-0.5 sm:m-1 cursor-pointer transition-all flex items-center justify-center
-            ${!isDayCurrentMonth ? 'opacity-20 pointer-events-none' : ''}
+            ${!isSameMonth(cloneDay, monthStart) ? 'opacity-20 pointer-events-none' : ''}
             ${isDayFuture ? 'opacity-20 pointer-events-none bg-slate-800' : bgColor}
             ${isDayToday ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900' : ''}
           `}
@@ -126,7 +126,7 @@ export const FeedingCalendar: React.FC<FeedingCalendarProps> = ({
     days = [];
   }
   
-  if (tempStreak > currentStreak && isCurrentMonth) currentStreak = tempStreak;
+  if (tempStreak > currentStreak) currentStreak = tempStreak;
 
   return (
     <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">

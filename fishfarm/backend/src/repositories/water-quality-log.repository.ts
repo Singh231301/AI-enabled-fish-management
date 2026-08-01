@@ -3,13 +3,9 @@ import { BaseRepository } from './base.repository';
 import { DOStats, PHStats, TemperatureStats, ColorFrequency } from '../types/water.types';
 import { differenceInDays } from 'date-fns';
 
-export class WaterQualityLogRepository extends BaseRepository<
-  WaterQualityLog,
-  Prisma.WaterQualityLogCreateInput,
-  Prisma.WaterQualityLogUpdateInput
-> {
+export class WaterQualityLogRepository extends BaseRepository<WaterQualityLog> {
   constructor(prisma: PrismaClient) {
-    super(prisma, prisma.waterQualityLog);
+    super(prisma);
   }
 
   async findByPondId(
@@ -259,5 +255,17 @@ export class WaterQualityLogRepository extends BaseRepository<
 
   async countByPondId(pondId: string): Promise<number> {
     return this.prisma.waterQualityLog.count({ where: { pondId } });
+  }
+
+  async create(data: Prisma.WaterQualityLogCreateInput): Promise<WaterQualityLog> {
+    return this.prisma.waterQualityLog.create({ data });
+  }
+
+  async update(id: string, data: Prisma.WaterQualityLogUpdateInput): Promise<WaterQualityLog> {
+    return this.prisma.waterQualityLog.update({ where: { id }, data });
+  }
+
+  async delete(id: string): Promise<WaterQualityLog> {
+    return this.prisma.waterQualityLog.delete({ where: { id } });
   }
 }

@@ -87,9 +87,9 @@ export class FeedingService {
       throw new AppError("No fish stocked in this pond. Stock fish before logging feeds.", 400);
     }
 
+    const { pondId: _pondId, ...dtoWithoutPondId } = dto;
     const log = await this.feedingLogRepo.create({
-      ...dto,
-      userId,
+      ...dtoWithoutPondId,
       feedDate: new Date(dto.feedDate),
       feedType: dto.feedType as any,
       fishResponse: dto.fishResponse as any,
@@ -270,7 +270,7 @@ export class FeedingService {
     return "Poor — significant feed waste. Review immediately";
   }
 
-  async getFeedingStats(pondId: string, userId: string, query: FeedingStatsQuery): Promise<any> {
+  async getFeedingStats(pondId: string, userId: string, query: { period?: string }): Promise<any> {
     const pond = await this.pondRepo.findByIdAndUserId(pondId, userId);
     if (!pond) throw new AppError("Pond not found", 404);
 

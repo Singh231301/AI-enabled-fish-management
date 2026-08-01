@@ -50,7 +50,7 @@ export const FeedingScheduleCard: React.FC<FeedingScheduleCardProps> = ({
       // For toggle, we just upsert with the opposite isActive
       const res = await feedingApi.upsertSchedule({
         pondId,
-        feedsPerDay: schedule.feedsPerDay,
+        feedsPerDay: ((((schedule.feedsPerDay || 0) || 0))),
         morningTime: schedule.morningTime || undefined,
         eveningTime: schedule.eveningTime || undefined,
         reminderEnabled: schedule.reminderEnabled,
@@ -235,7 +235,7 @@ export const FeedingScheduleCard: React.FC<FeedingScheduleCardProps> = ({
           </div>
         )}
 
-        {schedule?.feedsPerDay >= 2 && (
+        {(schedule?.feedsPerDay ?? 0) >= 2 && (
           <div className="flex justify-between items-center bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🌆</span>

@@ -1,4 +1,5 @@
 import { NotificationRepository } from '../repositories/notification.repository';
+import { NotificationPreferenceRepository } from '../repositories/notification-preference.repository';
 import { NotificationType, NotificationPriority } from '@prisma/client';
 
 export interface CreateNotificationDTO {
@@ -12,7 +13,10 @@ export interface CreateNotificationDTO {
 }
 
 export class NotificationService {
-  constructor(private notificationRepository: NotificationRepository) {}
+  constructor(
+    private notificationRepository: NotificationRepository,
+    private notificationPreferenceRepo: NotificationPreferenceRepository
+  ) {}
 
   async create(data: CreateNotificationDTO) {
     const { userId, pondId, ...rest } = data;
@@ -33,6 +37,12 @@ export class NotificationService {
   }
 
   async checkAndCreate(dto: CreateNotificationDTO) {
+    // 1. Check user preferences
+    const pref = await this.notificationPreferenceRepo.findByUserAndType(dto.userId, dto.type);
+    if (pref) {
+      if (!pref.inAppEnabled) return; // Notification disabled globally for this type
+    }
+
     if (dto.pondId) {
       const duplicate = await this.findRecentDuplicate(dto.userId, dto.pondId, dto.type);
       if (duplicate) {

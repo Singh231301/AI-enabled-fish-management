@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { waterController } from '../container';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
 

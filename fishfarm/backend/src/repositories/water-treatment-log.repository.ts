@@ -3,13 +3,9 @@ import { BaseRepository } from './base.repository';
 import { ChemicalUsageSummary } from '../types/water.types';
 import { addDays } from 'date-fns';
 
-export class WaterTreatmentLogRepository extends BaseRepository<
-  WaterTreatmentLog,
-  Prisma.WaterTreatmentLogCreateInput,
-  Prisma.WaterTreatmentLogUpdateInput
-> {
+export class WaterTreatmentLogRepository extends BaseRepository<WaterTreatmentLog> {
   constructor(prisma: PrismaClient) {
-    super(prisma, prisma.waterTreatmentLog);
+    super(prisma);
   }
 
   async findByPondId(
@@ -103,5 +99,17 @@ export class WaterTreatmentLogRepository extends BaseRepository<
     return this.prisma.waterTreatmentLog.findFirst({
       where: { id, pondId },
     });
+  }
+
+  async create(data: Prisma.WaterTreatmentLogCreateInput): Promise<WaterTreatmentLog> {
+    return this.prisma.waterTreatmentLog.create({ data });
+  }
+
+  async update(id: string, data: Prisma.WaterTreatmentLogUpdateInput): Promise<WaterTreatmentLog> {
+    return this.prisma.waterTreatmentLog.update({ where: { id }, data });
+  }
+
+  async delete(id: string): Promise<WaterTreatmentLog> {
+    return this.prisma.waterTreatmentLog.delete({ where: { id } });
   }
 }

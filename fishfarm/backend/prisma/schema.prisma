@@ -109,6 +109,21 @@ enum InventoryTransactionType {
   WASTAGE
 }
 
+enum MaintenanceStatus {
+  PENDING
+  COMPLETED
+  OVERDUE
+  SKIPPED
+}
+
+enum TransactionSource {
+  MANUAL
+  FEEDING_LOG
+  WATER_TREATMENT
+  EXPENSE_IMPORT
+  ADJUSTMENT
+}
+
 enum TaskCategory {
   DAILY
   WEEKLY
@@ -184,6 +199,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  settings          UserSettings?
+  notificationPrefs NotificationPreference[]
+  sentInvitations   UserInvitation[] @relation("SentInvitations")
+
   ponds                  Pond[]
   fishStockings          FishStocking[]
   mortalityLogs          MortalityLog[]
@@ -206,9 +225,12 @@ model User {
   aiChatHistories        AiChatHistory[]
   infrastructureItems    InfrastructureChecklist[]
   activityLogs           ActivityLog[]
+  maintenanceSchedules   EquipmentMaintenance[]
 
   @@map("users")
 }
+
+
 
 model Pond {
   id               String   @id @default(uuid())
@@ -249,6 +271,7 @@ model Pond {
   aiBriefings             AiBriefing[]
   aiChatHistories         AiChatHistory[]
   infrastructureItems     InfrastructureChecklist[]
+  invitations             UserInvitation[]
 
   @@map("ponds")
 }
@@ -489,12 +512,20 @@ model Inventory {
   unitCost           Float?
   lastRestockedDate  DateTime?
   notes              String?
+  description        String?
+  supplier           String?
+  location           String?
+  isActive           Boolean  @default(true)
+  totalPurchasedKg   Float    @default(0)
+  totalUsedKg        Float    @default(0)
+  lastTransactionDate DateTime?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
   pond         Pond                   @relation(fields: [pondId], references: [id])
   user         User                   @relation(fields: [userId], references: [id])
   transactions InventoryTransaction[]
+  maintenanceSchedules EquipmentMaintenance[]
 
   @@map("inventory")
 }
@@ -508,6 +539,13 @@ model InventoryTransaction {
   unitCost        Float?
   transactionDate DateTime
   referenceNote   String?
+  sourceType      TransactionSource @default(MANUAL)
+  sourceId        String?
+  notes           String?
+  totalCost       Float?
+  supplier        String?
+  invoiceNumber   String?
+  balanceAfter    Float
   createdAt       DateTime                 @default(now())
   updatedAt       DateTime                 @updatedAt
 
@@ -530,17 +568,51 @@ model Task {
   dueDate           DateTime
   completedDate     DateTime?
   completionNote    String?
-  isRecurring       Boolean      @default(false)
-  recurrencePattern String?
-  nextDueDate       DateTime?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  isRecurring              Boolean      @default(false)
+  recurrencePattern        String?
+  recurrenceEndDate        DateTime?
+  recurrenceMaxOccurrences Int?
+  recurrenceCount          Int          @default(0)
+  parentTaskId             String?
+  reminderDaysBefore       Int?         @default(1)
+  tags                     String[]     @default([])
+  estimatedMinutes         Int?
+  actualMinutes            Int?
 
-  pond       Pond? @relation(fields: [pondId], references: [id])
-  user       User  @relation(fields: [userId], references: [id])
-  assignedTo User? @relation("AssignedTasks", fields: [assignedToUserId], references: [id])
+  skipReason               String?
+  isAiGenerated            Boolean      @default(false)
+  aiContext                Json?
+  viewedAt                 DateTime?
+  nextDueDate              DateTime?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+
+  pond       Pond?  @relation(fields: [pondId], references: [id])
+  user       User   @relation(fields: [userId], references: [id])
+  assignedTo User?  @relation("AssignedTasks", fields: [assignedToUserId], references: [id])
+  parentTask Task?  @relation("RecurringTasks", fields: [parentTaskId], references: [id])
+  childTasks Task[] @relation("RecurringTasks")
 
   @@map("tasks")
+}
+
+model TaskTemplate {
+  id               String       @id @default(uuid())
+  name             String
+  description      String?
+  category         TaskCategory
+  priority         TaskPriority
+  isRecurring      Boolean      @default(false)
+  recurrencePattern String?
+  estimatedMinutes Int?
+  tags             String[]     @default([])
+  isSystemTemplate Boolean      @default(false)
+  isActive         Boolean      @default(true)
+  usageCount       Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("task_templates")
 }
 
 model Notification {
@@ -629,6 +701,78 @@ model ActivityLog {
   @@map("activity_logs")
 }
 
+model UserSettings {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  
+  // Display preferences
+  defaultPondId         String?
+  language              String   @default("en")
+  dateFormat            String   @default("dd MMM yyyy")
+  weightUnit            String   @default("grams")
+  currency              String   @default("INR")
+  theme                 String   @default("dark")
+  
+  // Dashboard preferences
+  dashboardRefreshMinutes Int    @default(5)
+  showWeatherWidget     Boolean  @default(true)
+  showAIBriefing        Boolean  @default(true)
+  
+  // Feeding preferences
+  defaultFeedType       String   @default("FLOATING_PELLET")
+  feedingRemindersEnabled Boolean @default(true)
+  
+  // Notification preferences
+  emailNotificationsEnabled Boolean @default(false)
+  inAppNotificationsEnabled Boolean @default(true)
+  notificationSound     Boolean  @default(false)
+  
+  // Privacy
+  shareAnonymousData    Boolean  @default(false)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_settings")
+}
+
+model NotificationPreference {
+  id               String   @id @default(uuid())
+  userId           String
+  notificationType String   // Maps to NotificationType enum values
+  inAppEnabled     Boolean  @default(true)
+  emailEnabled     Boolean  @default(false)
+  minimumPriority  String   @default("LOW")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, notificationType])
+  @@map("notification_preferences")
+}
+
+model UserInvitation {
+  id          String    @id @default(uuid())
+  invitedBy   String
+  email       String
+  role        UserRole  @default(VIEWER)
+  token       String    @unique @default(uuid())
+  isAccepted  Boolean   @default(false)
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  pondId      String?
+  message     String?
+  createdAt   DateTime  @default(now())
+
+  inviter User  @relation("SentInvitations",  fields: [invitedBy], references: [id])
+  pond    Pond? @relation(fields: [pondId],   references: [id])
+
+  @@map("user_invitations")
+}
+
 model Budget {
   id           String          @id @default(uuid())
   pondId       String
@@ -662,4 +806,25 @@ model BuyerContact {
   user User @relation(fields: [userId], references: [id])
 
   @@map("buyer_contacts")
+}
+
+model EquipmentMaintenance {
+  id                String            @id @default(uuid())
+  inventoryId       String
+  userId            String
+  scheduledDate     DateTime
+  completedDate     DateTime?
+  maintenanceType   String
+  description       String?
+  cost              Float?
+  status            MaintenanceStatus @default(PENDING)
+  notes             String?
+  nextScheduledDate DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("equipment_maintenance")
 }

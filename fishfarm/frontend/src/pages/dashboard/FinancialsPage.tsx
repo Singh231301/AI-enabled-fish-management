@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout } from '../../components/layout/Layout';
-import { usePond } from '../../context/PondContext';
+import { pondApi } from '../../api/endpoints/pond.api';
 import * as financialsApi from '../../api/endpoints/financials.api';
 import { 
   FinancialOverview, FinancialStats, Expense, Sale, Budget, MarketPrice, 
@@ -23,7 +22,15 @@ import { EXPENSE_CATEGORY_CONFIG, PAYMENT_STATUS_CONFIG } from '../../utils/cons
 import { format } from 'date-fns';
 
 export const FinancialsPage = () => {
-  const { currentPond } = usePond();
+  const [ponds, setPonds] = useState<any[]>([]);
+  const [currentPond, setCurrentPond] = useState<any>(null);
+
+  useEffect(() => {
+    pondApi.getUserPonds().then(res => {
+      setPonds(res.data);
+      if(res.data.length > 0) setCurrentPond(res.data[0]);
+    });
+  }, []);
   const [activeTab, setActiveTab] = useState<'overview' | 'expenses' | 'sales' | 'analysis'>('overview');
   const [period, setPeriod] = useState('current_month');
   
@@ -129,16 +136,16 @@ export const FinancialsPage = () => {
 
   if (!currentPond) {
     return (
-      <Layout>
+      <>
         <div className="flex h-full items-center justify-center">
           <p className="text-slate-500">Please select a pond to view financials.</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -434,6 +441,6 @@ export const FinancialsPage = () => {
         />
       )}
 
-    </Layout>
+    </>
   );
 };

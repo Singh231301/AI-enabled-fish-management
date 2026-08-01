@@ -1,9 +1,9 @@
-import { AppError } from '../middleware/error.middleware';
+import { AppError } from '../utils/app-error';
 import { PondRepository } from '../repositories/pond.repository';
 import { FishStockingRepository } from '../repositories/fish-stocking.repository';
 import { MortalityLogRepository } from '../repositories/mortality-log.repository';
 import { ActivityLogRepository } from '../repositories/activity-log.repository';
-import { NotificationService } from './notification.service';
+import { NotificationService } from './notifications.service';
 import { WaterQualityLogRepository } from '../repositories/water-quality-log.repository';
 import { WaterTreatmentLogRepository } from '../repositories/water-treatment-log.repository';
 import {
@@ -13,6 +13,8 @@ import {
   UpdateWaterTreatmentDTO,
   WaterQualityListQuery,
   WaterQualityStatsQuery,
+} from '../validators/water.validator';
+import {
   WaterAlert,
   WaterOverview,
   WaterQualityStats,
@@ -462,12 +464,11 @@ export class WaterService {
     await this.checkAndNotifyWaterAlerts(dto.pondId, userId, log);
 
     await this.activityRepo.create({
-      userId,
-      pondId: pond.id,
+      user: { connect: { id: userId } },
       action: 'WATER_QUALITY_LOGGED',
       module: 'water',
       recordId: log.id,
-      details: { ph: log.phValue, color: log.waterColor }
+      details: { ph: log.phValue, color: log.waterColor } as any
     });
 
     return log;
@@ -530,12 +531,11 @@ export class WaterService {
     await this.waterQualityRepo.delete(id);
 
     await this.activityRepo.create({
-      userId,
-      pondId: pond.id,
+      user: { connect: { id: userId } },
       action: 'WATER_QUALITY_DELETED',
       module: 'water',
       recordId: id,
-      details: {}
+      details: { id } as any
     });
 
     return true;
@@ -579,8 +579,7 @@ export class WaterService {
     });
 
     await this.activityRepo.create({
-      userId,
-      pondId: pond.id,
+      user: { connect: { id: userId } },
       action: 'WATER_TREATMENT_APPLIED',
       module: 'water',
       recordId: treatment.id,
@@ -739,7 +738,7 @@ export class WaterService {
     return {
       periodDays,
       totalReadings: allLogs.length,
-      daysSinceLastReading,
+      daysSinceLastReading: daysSinceReading,
       latestLog,
       latestPHStatus: latestLog?.phValue ? this.getPHStatus(latestLog.phValue) : 'NO_DATA',
       latestDOStatus: latestLog?.dissolvedOxygenPpm ? this.getDOStatus(latestLog.dissolvedOxygenPpm) : 'NO_DATA',

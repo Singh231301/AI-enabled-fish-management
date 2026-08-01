@@ -1,21 +1,30 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { User, LoginForm } from '../types/auth.types';
+import { UserSettings } from '../types/settings.types';
 import * as authApi from '../api/endpoints/auth.api';
+import { settingsApi } from '../api/endpoints/settings.api';
+import { setGlobalSettings } from '../stores/settings.store';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {
   user: User | null;
+  userSettings: UserSettings | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (data: LoginForm) => Promise<void>;
   logout: () => void;
   loadUser: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => void;
+  selectedPondId: string | null;
+  setSelectedPondId: (id: string | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+  const [selectedPondId, setSelectedPondId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = async () => {
@@ -29,10 +38,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await authApi.getMe();
       if (response.success) {
         setUser(response.data);
+        try {
+          const settingsRes = await settingsApi.getUserSettings();
+          if (settingsRes.success && settingsRes.data) {
+            setUserSettings(settingsRes.data);
+            setGlobalSettings(settingsRes.data);
+            if (settingsRes.data.defaultPondId) {
+              setSelectedPondId(prev => prev || settingsRes.data.defaultPondId);
+            }
+          }
+        } catch (settingsError) {
+          console.error('Failed to load user settings', settingsError);
+        }
       }
     } catch (error) {
       console.error('Failed to load user', error);
       setUser(null);
+      setUserSettings(null);
     } finally {
       setIsLoading(false);
     }
@@ -49,6 +71,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('fishfarm_token', response.data.token);
         setUser(response.data.user);
         toast.success('Logged in successfully');
+        // trigger a settings fetch by calling loadUser, or just fetch directly:
+        try {
+          const settingsRes = await settingsApi.getUserSettings();
+          if (settingsRes.success && settingsRes.data) {
+            setUserSettings(settingsRes.data);
+            setGlobalSettings(settingsRes.data);
+            if (settingsRes.data.defaultPondId) {
+              setSelectedPondId(prev => prev || settingsRes.data.defaultPondId);
+            }
+          }
+        } catch (settingsError) {
+          console.error('Failed to load user settings after login', settingsError);
+        }
       }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
@@ -59,8 +94,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('fishfarm_token');
     setUser(null);
+    setUserSettings(null);
     toast.success('Logged out successfully');
     window.location.href = '/login';
+  };
+
+  const updateUser = (updates: Partial<User>) => {
+    setUser(prev => prev ? { ...prev, ...updates } : null);
   };
 
   if (isLoading) {
@@ -72,7 +112,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, loadUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      userSettings, 
+      isAuthenticated: !!user, 
+      isLoading, 
+      login, 
+      logout, 
+      loadUser, 
+      updateUser,
+      selectedPondId,
+      setSelectedPondId
+    }}>
       {children}
     </AuthContext.Provider>
   );

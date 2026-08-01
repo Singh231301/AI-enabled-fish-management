@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, Map, LogOut, Fish, Wheat, Droplets, IndianRupee } from 'lucide-react';
+import { LayoutDashboard, Map, LogOut, Fish, Wheat, Droplets, IndianRupee, Package, ListTodo, Bot, BarChart2, Settings } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const { logout } = useAuth();
@@ -9,10 +9,15 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Pond Profile', path: '/pond', icon: Map },
+    { name: 'Tasks', path: '/tasks', icon: ListTodo },
     { name: 'Fish Stocking', path: '/fish', icon: Fish },
     { name: 'Feeding', path: '/feeding', icon: Wheat },
     { name: 'Water Quality', path: '/water', icon: Droplets },
     { name: 'Financials', path: '/financials', icon: IndianRupee },
+    { name: 'Inventory', path: '/inventory', icon: Package },
+    { name: 'Reports', path: '/reports', icon: BarChart2 },
+    { name: 'AI Assistant', path: '/ai', icon: Bot },
+    { name: 'Settings', path: '/settings', icon: Settings },
   ];
 
   return (

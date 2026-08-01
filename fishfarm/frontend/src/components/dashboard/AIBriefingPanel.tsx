@@ -192,6 +192,9 @@ export const AIBriefingPanel: React.FC<AIBriefingPanelProps> = ({ pondId, fishAg
               <button onClick={() => navigate('/tasks')} className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/20 text-teal-300 rounded-full text-xs font-medium transition-colors">
                 <CheckSquare size={12} /> View Tasks
               </button>
+              <button onClick={() => navigate('/ai')} className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-300 rounded-full text-xs font-medium transition-colors">
+                <Bot size={12} /> Ask AI
+              </button>
             </div>
           </div>
         )}

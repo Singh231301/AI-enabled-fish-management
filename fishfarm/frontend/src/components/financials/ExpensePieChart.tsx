@@ -17,9 +17,9 @@ export const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ data }) => {
   }
 
   const chartData = data.map(item => ({
-    name: EXPENSE_CATEGORY_CONFIG[item.category]?.label || item.label,
+    name: (EXPENSE_CATEGORY_CONFIG as any)[item.category]?.label || item.label,
     value: item.total,
-    color: getTailwindColorHex(EXPENSE_CATEGORY_CONFIG[item.category]?.color || 'text-slate-400')
+    color: getTailwindColorHex((EXPENSE_CATEGORY_CONFIG as any)[item.category]?.color || 'text-slate-400')
   }));
 
   return (

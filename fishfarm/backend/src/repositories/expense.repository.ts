@@ -5,7 +5,7 @@ import { startOfMonth, endOfMonth, format, subMonths } from 'date-fns';
 
 export class ExpenseRepository extends BaseRepository<Expense> {
   constructor(prisma: PrismaClient) {
-    super(prisma, 'expense');
+    super(prisma);
   }
 
   async findById(id: string): Promise<Expense | null> {

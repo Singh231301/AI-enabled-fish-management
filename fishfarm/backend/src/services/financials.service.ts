@@ -8,13 +8,18 @@ import { FishStockingRepository } from '../repositories/fish-stocking.repository
 import { FishGrowthSampleRepository } from '../repositories/fish-growth-sample.repository';
 import { MortalityLogRepository } from '../repositories/mortality-log.repository';
 import { ActivityLogRepository } from '../repositories/activity-log.repository';
-import { NotificationService } from './notification.service';
+import { NotificationService } from './notifications.service';
 import { 
-  CreateExpenseDTO, CreateSaleDTO, RecordPaymentDTO, CreateMarketPriceDTO, SetBudgetDTO,
-  FinancialQuery, FinancialStatsQuery, FinancialStats, FinancialOverview, BudgetVsActual,
+  FinancialStats, FinancialOverview, BudgetVsActual,
   CategoryBreakdown, MonthlyCashFlow, BreakEvenAnalysis, HarvestProjection, PLStatement
 } from '../types/financials.types';
-import { AppError } from '../middleware/error.middleware';
+import { 
+  CreateExpenseDTO, CreateSaleDTO, RecordPaymentDTO, CreateMarketPriceDTO, 
+  SetBudgetDTO,
+  FinancialQuery,
+  FinancialStatsQuery
+} from '../validators/financials.validator';
+import { AppError } from '../utils/app-error';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 const EXPENSE_CATEGORY_LABELS: Record<string, string> = {
@@ -100,7 +105,7 @@ export class FinancialService {
     }
 
     await this.activityRepo.create({
-      userId,
+      user: { connect: { id: userId } },
       action: 'CREATED',
       module: 'FINANCIAL_EXPENSE',
       recordId: expense.id,

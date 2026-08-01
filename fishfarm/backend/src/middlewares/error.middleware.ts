@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/app-error';
 import { sendError } from '../utils/response.utils';
-import { ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { env } from '../config/env';
@@ -12,20 +12,25 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  logger.error(err.message, err);
+  logger.error('Unhandled Error', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
 
-  if (err instanceof AppError) {
-    return sendError(res, err.message, err.statusCode);
+  if (err instanceof z.ZodError) {
+    const formattedErrors = err.errors.map(e => ({
+      path: e.path.join('.'),
+      message: e.message
+    }));
+    sendError(res, 'Validation Error', 400, formattedErrors);
+    return;
   }
 
-  if (err instanceof ZodError) {
-    const fieldErrors: Record<string, string[]> = {};
-    err.errors.forEach(e => {
-      const path = e.path.join('.');
-      if (!fieldErrors[path]) fieldErrors[path] = [];
-      fieldErrors[path].push(e.message);
-    });
-    return sendError(res, 'Validation failed', 422, fieldErrors);
+  if (err instanceof AppError) {
+    sendError(res, err.message, err.statusCode);
+    return;
   }
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {

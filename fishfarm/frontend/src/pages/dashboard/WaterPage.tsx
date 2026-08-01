@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { pondApi } from '../../api/endpoints/pond.api';
 import { waterApi } from '../../api/endpoints/water.api';
 import { Pond } from '../../types/pond.types';
@@ -47,7 +47,7 @@ export const WaterPage: React.FC = () => {
 
   const fetchPonds = async () => {
     try {
-      const res = await pondApi.getAllPonds();
+      const res = await pondApi.getUserPonds();
       if (res.success && res.data.length > 0) {
         setPonds(res.data);
         setSelectedPondId(res.data[0].id);

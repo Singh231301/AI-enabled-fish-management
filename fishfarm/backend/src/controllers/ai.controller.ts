@@ -1,11 +1,79 @@
 import { Request, Response, NextFunction } from 'express';
 import { sendSuccess } from '../utils/response.utils';
+import { AiService } from '../services/ai.service';
+import {
+  sendMessageSchema,
+  generateBriefingSchema,
+  getInsightsSchema,
+  getChatHistorySchema,
+  getDailyBriefingSchema,
+  getWeeklyReportSchema
+} from '../validators/ai.validator';
 
 export class AiController {
+  constructor(private readonly aiService: AiService) {}
+
+  sendMessage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const body = sendMessageSchema.parse(req.body);
+      const result = await this.aiService.sendMessage(body, req.user!.id);
+      return sendSuccess(res, result, "Message sent");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  sendMessageStream = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const body = sendMessageSchema.parse(req.body);
+      
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.flushHeaders();
+      
+      let fullText = '';
+      
+      await this.aiService.sendMessageStream(
+        body,
+        req.user!.id,
+        (chunk: string) => {
+          res.write(`data: ${JSON.stringify({ type: 'chunk', text: chunk })}\n\n`);
+        },
+        (text: string, sessionId: string) => {
+          fullText = text;
+          res.write(`data: ${JSON.stringify({ type: 'done', text, sessionId })}\n\n`);
+          res.end();
+        },
+        (error: Error) => {
+          res.write(`data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`);
+          res.end();
+        }
+      );
+      
+      req.on('close', () => {
+        res.end();
+      });
+      
+    } catch (error) {
+      if (!res.headersSent) {
+        next(error);
+      } else {
+        res.write(`data: ${JSON.stringify({ type: 'error', message: 'Internal server error' })}\n\n`);
+        res.end();
+      }
+    }
+  };
+
   getDailyBriefing = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Stub: return null to force generation
-      return sendSuccess(res, { briefing: null, generatedAt: null }, "OK");
+      const query = getDailyBriefingSchema.parse(req.query);
+      const briefing = await this.aiService.getDailyBriefing(query.pondId, req.user!.id);
+      if (!briefing) {
+        return sendSuccess(res, null, "No briefing yet");
+      }
+      return sendSuccess(res, briefing, "Briefing retrieved");
     } catch (error) {
       next(error);
     }
@@ -13,21 +81,75 @@ export class AiController {
 
   generateDailyBriefing = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Stub: return a hardcoded briefing
-      const { pondId, fishAgeDays, expectedWeight, recommendedFeed } = req.body;
-      
-      const age = fishAgeDays || 45;
-      const weight = expectedWeight || 350;
-      const feed = recommendedFeed || 850;
+      const body = generateBriefingSchema.parse(req.body);
+      const briefing = await this.aiService.generateDailyBriefing(body.pondId, req.user!.id, body.forceRegenerate);
+      return sendSuccess(res, briefing, "Briefing generated");
+    } catch (error) {
+      next(error);
+    }
+  };
 
-      const briefing = `🐟 Fish Update: Your Pangasius fingerlings are ${age} days old today. 
-Based on their age, they should be averaging around ${weight}g. 
-📊 Feeding: Recommended feed today is ${feed}g split into 2 sessions.
-💧 Water: Check pH if not done in last 2 days.
-✅ Priority: Complete any overdue tasks in your task list.
-📅 This week: Focus on monitoring feeding response and water clarity.`;
+  getWeeklyReport = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = getWeeklyReportSchema.parse(req.query);
+      const report = await this.aiService.generateWeeklyReport(query.pondId, req.user!.id);
+      return sendSuccess(res, report, "Weekly report retrieved");
+    } catch (error) {
+      next(error);
+    }
+  };
 
-      return sendSuccess(res, { briefing, generatedAt: new Date().toISOString() }, "Generated");
+  getInsights = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = getInsightsSchema.parse(req.query);
+      const insights = await this.aiService.generateInsights(query.pondId, req.user!.id, query.module);
+      return sendSuccess(res, insights, "Insights generated");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getSuggestedQuestions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { pondId } = req.query;
+      if (!pondId || typeof pondId !== 'string') {
+        throw new Error("Pond ID is required");
+      }
+      const questions = await this.aiService.getSuggestedQuestions(pondId, req.user!.id);
+      return sendSuccess(res, questions, "Questions generated");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getChatHistory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = getChatHistorySchema.parse(req.query);
+      const result = await this.aiService.getChatHistory(req.user!.id, query);
+      return sendSuccess(res, result, "Chat history retrieved");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  clearSession = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { sessionId } = req.params;
+      await this.aiService['chatHistoryRepo'].deleteSession(sessionId, req.user!.id);
+      return sendSuccess(res, null, "Session cleared");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getFarmHealthScore = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { pondId } = req.query;
+      if (!pondId || typeof pondId !== 'string') {
+        throw new Error("Pond ID is required");
+      }
+      const score = await this.aiService.calculateFarmHealthScore(pondId, req.user!.id);
+      return sendSuccess(res, score, "Farm health score calculated");
     } catch (error) {
       next(error);
     }

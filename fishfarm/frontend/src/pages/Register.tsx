@@ -15,7 +15,7 @@ export const Register: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await authApi.register({ fullName, email, password, phone });
+      const response = await authApi.register({ fullName, email, password, confirmPassword: password } as any);
       if (response.success) {
         toast.success('Registration successful! You can now log in.');
         navigate('/login');

@@ -1,10 +1,11 @@
 import { Router } from 'express';
+import { authMiddleware } from '../middlewares/auth.middleware';
+import { requireRole } from '../middlewares/role.middleware';
 import { financialsController } from '../container';
-import { requireAuth } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(authMiddleware);
 
 router.get('/overview', financialsController.getFinancialOverview);
 router.get('/stats', financialsController.getFinancialStats);

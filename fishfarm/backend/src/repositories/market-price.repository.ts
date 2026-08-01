@@ -4,7 +4,7 @@ import { subMonths } from 'date-fns';
 
 export class MarketPriceRepository extends BaseRepository<MarketPrice> {
   constructor(prisma: PrismaClient) {
-    super(prisma, 'marketPrice');
+    super(prisma);
   }
 
   async findByPondId(pondId: string): Promise<MarketPrice[]> {

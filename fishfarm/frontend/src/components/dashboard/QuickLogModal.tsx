@@ -38,7 +38,7 @@ export const QuickLogModal: React.FC<QuickLogModalProps> = ({
 
   const feedingForm = useForm<FeedingFormData>({
     resolver: zodResolver(feedingSchema),
-    defaultValues: { fishResponse: 'normal' }
+    defaultValues: { fishResponse: 'GOOD' }
   });
 
   const mortalityForm = useForm<MortalityFormData>({
@@ -54,11 +54,14 @@ export const QuickLogModal: React.FC<QuickLogModalProps> = ({
       setServerError(null);
       // Construct exact Date payload since API might expect it
       const d = new Date();
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
       
-      await api.post('/feeding', {
+      await api.post('/feeding/logs', {
         pondId,
         feedDate: d.toISOString().split('T')[0],
-        feedTime: d.toISOString(),
+        feedTime: `${hours}:${minutes}`,
+        feedType: 'FLOATING_PELLET',
         quantityGrams: data.quantityGrams,
         fishResponse: data.fishResponse,
         loggedBy: 'dashboard'
@@ -81,7 +84,7 @@ export const QuickLogModal: React.FC<QuickLogModalProps> = ({
       setServerError(null);
       const d = new Date();
       
-      await api.post('/mortality', {
+      await api.post('/fish/mortality', {
         pondId,
         logDate: d.toISOString(),
         deadCount: data.deadCount,
@@ -142,9 +145,9 @@ export const QuickLogModal: React.FC<QuickLogModalProps> = ({
                   {...feedingForm.register('fishResponse')}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
                 >
-                  <option value="excellent">Excellent</option>
-                  <option value="normal">Normal</option>
-                  <option value="poor">Poor</option>
+                  <option value="EXCELLENT">Excellent</option>
+                  <option value="GOOD">Normal</option>
+                  <option value="POOR">Poor</option>
                 </select>
                 {feedingForm.formState.errors.fishResponse && (
                   <p className="mt-1.5 text-sm text-red-400">{feedingForm.formState.errors.fishResponse.message}</p>
