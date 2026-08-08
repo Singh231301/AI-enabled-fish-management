@@ -301,7 +301,7 @@ export const PondProfile: React.FC = () => {
               Fish Tracking
             </button>
             <Link
-              to={`/ponds/${selectedPond.id}/feeding`}
+              to="/feeding"
               className="py-3 px-6 font-medium text-sm transition-colors border-b-2 text-slate-400 hover:text-white border-transparent hover:bg-slate-800/50 flex items-center gap-2"
             >
               🍽️ Feeding

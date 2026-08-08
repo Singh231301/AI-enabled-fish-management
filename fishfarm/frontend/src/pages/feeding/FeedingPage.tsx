@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { pondApi } from '../../api/endpoints/pond.api';
+import { Pond } from '../../types/pond.types';
 import { feedingApi } from '../../api/endpoints/feeding.api';
 import { 
   FeedingOverview, 
@@ -24,18 +25,20 @@ import { QuickFeedModal } from '../../components/feeding/QuickFeedModal';
 import { FeedingLogForm } from '../../components/feeding/FeedingLogForm';
 
 import { 
-  ArrowLeft, RefreshCw, Calendar as CalendarIcon, 
-  BarChart2, FileText, Download, Plus, Search 
+  RefreshCw, Calendar as CalendarIcon, 
+  BarChart2, FileText, Download, Plus, Search, Wheat
 } from 'lucide-react';
 import { FEED_TYPE_CONFIG, FISH_RESPONSE_CONFIG } from '../../utils/constants';
 
 export const FeedingPage: React.FC = () => {
-  const { pondId } = useParams<{ pondId: string }>();
+  const [ponds, setPonds] = useState<Pond[]>([]);
+  const [pondId, setPondId] = useState<string>('');
   
   // Data State
   const [overview, setOverview] = useState<FeedingOverview | null>(null);
   const [logs, setLogs] = useState<FeedingLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPondsLoading, setIsPondsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [period, setPeriod] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
   
@@ -69,8 +72,29 @@ export const FeedingPage: React.FC = () => {
   }, [pondId, period]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    const fetchPonds = async () => {
+      try {
+        const res = await pondApi.getUserPonds();
+        if (res.success && res.data.length > 0) {
+          setPonds(res.data);
+          const saved = localStorage.getItem('fishfarm_selected_pond');
+          const toSelect = res.data.find(p => p.id === saved) ?? res.data[0];
+          setPondId(toSelect.id);
+        }
+      } catch (error) {
+        toast.error('Failed to load ponds');
+      } finally {
+        setIsPondsLoading(false);
+      }
+    };
+    fetchPonds();
+  }, []);
+
+  useEffect(() => {
+    if (pondId) {
+      loadData();
+    }
+  }, [loadData, pondId]);
 
   const handlePeriodChange = async (newPeriod: '7d' | '30d' | '90d' | 'all') => {
     if (!pondId || !overview) return;
@@ -99,40 +123,75 @@ export const FeedingPage: React.FC = () => {
     }
   };
 
-  if (!pondId) return <div className="p-6 text-white text-center">Invalid Pond ID</div>;
+  if (isPondsLoading) {
+    return (
+      <div className="flex items-center justify-center h-[70vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
+      </div>
+    );
+  }
+
+  if (ponds.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh] bg-slate-900 rounded-xl border border-slate-800 m-6">
+        <Wheat size={64} className="text-slate-700 mb-4" />
+        <h2 className="text-2xl font-bold text-white mb-2">No Ponds Found</h2>
+        <p className="text-slate-400 max-w-md text-center mb-6">
+          You need to add a pond before you can manage feeding.
+        </p>
+      </div>
+    );
+  }
+
+  if (!pondId) return null;
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm mb-6">
         <div>
-          <Link to="/pond" className="text-sky-400 hover:text-sky-300 flex items-center gap-2 mb-2 text-sm font-medium w-fit">
-            <ArrowLeft size={16} /> Back to Pond Profile
-          </Link>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Feeding Management</h1>
-            {isRefreshing && <RefreshCw size={20} className="text-slate-400 animate-spin" />}
+            <Wheat className="text-sky-400" size={28} />
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              Feeding Management
+              {isRefreshing && <RefreshCw size={20} className="text-slate-400 animate-spin" />}
+            </h1>
           </div>
           <p className="text-slate-400 mt-1">Track feed consumption, analyze FCR, and optimize growth.</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setIsQuickFeedOpen(true)}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg border border-slate-700 shadow-sm flex items-center gap-2 transition-all"
-          >
-            ⚡ Quick Feed
-          </button>
-          <button 
-            onClick={() => {
-              setEditingLog(undefined);
-              setIsFullFormOpen(true);
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+          <select
+            value={pondId}
+            onChange={(e) => {
+              setPondId(e.target.value);
+              localStorage.setItem('fishfarm_selected_pond', e.target.value);
             }}
-            className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg shadow-md shadow-sky-900/20 flex items-center gap-2 transition-all"
+            className="w-full sm:w-auto bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500"
           >
-            <Plus size={18} /> Detailed Log
-          </button>
+            {ponds.map(pond => (
+              <option key={pond.id} value={pond.id}>{pond.name}</option>
+            ))}
+          </select>
+
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setIsQuickFeedOpen(true)}
+              className="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg border border-slate-700 shadow-sm flex items-center justify-center gap-2 transition-all"
+            >
+              ⚡ Quick Feed
+            </button>
+            <button 
+              onClick={() => {
+                setEditingLog(undefined);
+                setIsFullFormOpen(true);
+              }}
+              className="flex-1 sm:flex-none px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg shadow-md shadow-sky-900/20 flex items-center justify-center gap-2 transition-all"
+            >
+              <Plus size={18} /> Detailed Log
+            </button>
+          </div>
         </div>
       </div>
 
