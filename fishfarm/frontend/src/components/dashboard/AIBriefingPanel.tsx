@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bot, RefreshCw, Activity, Droplets, CheckSquare, AlertCircle } from 'lucide-react';
 import { PondBasicStats } from '../../types/dashboard.types';
-import api from '../../api/axios';
+import { aiApi } from '../../api/endpoints/ai.api';
 import { useNavigate } from 'react-router-dom';
 
 interface AIBriefingPanelProps {
@@ -24,10 +24,10 @@ export const AIBriefingPanel: React.FC<AIBriefingPanelProps> = ({ pondId, fishAg
     try {
       setIsLoading(true);
       setHasError(false);
-      const res = await api.get(`/ai/daily-briefing/${pondId}`);
-      if (res.data.data?.briefing) {
-        setBriefing(res.data.data.briefing);
-        setLastGeneratedAt(res.data.data.generatedAt);
+      const res = await aiApi.getDailyBriefing(pondId);
+      if (res?.content) {
+        setBriefing(res.content);
+        setLastGeneratedAt(res.createdAt);
       } else {
         setBriefing(null);
       }
@@ -48,18 +48,10 @@ export const AIBriefingPanel: React.FC<AIBriefingPanelProps> = ({ pondId, fishAg
       setIsGenerating(true);
       setHasError(false);
       
-      const payload = {
-        pondId,
-        fishAgeDays,
-        species,
-        expectedWeight: basicStats.latestAvgWeightGrams || 350,
-        recommendedFeed: basicStats.estimatedBiomassKg * 1000 * 0.03 || 850
-      };
-
-      const res = await api.post('/ai/daily-briefing', payload);
-      if (res.data.success) {
-        setBriefing(res.data.data.briefing);
-        setLastGeneratedAt(res.data.data.generatedAt);
+      const res = await aiApi.generateDailyBriefing({ pondId, forceRegenerate: true });
+      if (res?.content) {
+        setBriefing(res.content);
+        setLastGeneratedAt(res.createdAt);
       }
     } catch (err) {
       setHasError(true);

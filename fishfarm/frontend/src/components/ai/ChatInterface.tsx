@@ -61,7 +61,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ pondId, selectedPondName 
 
     setMessages(prev => [...prev, aiMsg]);
 
-    const token = localStorage.getItem('token') || '';
+    const token = localStorage.getItem('fishfarm_token') || '';
 
     try {
       setIsStreaming(true);

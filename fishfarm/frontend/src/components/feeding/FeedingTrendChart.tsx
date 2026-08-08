@@ -101,7 +101,7 @@ export const FeedingTrendChart: React.FC<FeedingTrendChartProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden flex flex-col h-full">
+    <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b border-slate-800 gap-3">
         <div className="flex bg-slate-800 p-1 rounded-lg">
@@ -135,9 +135,9 @@ export const FeedingTrendChart: React.FC<FeedingTrendChartProps> = ({
       </div>
 
       {/* CHART AREA */}
-      <div className="p-4 flex-grow min-h-[250px]">
+      <div className="p-4 w-full" style={{ height: '300px' }}>
         {view === 'daily' ? (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={dailyWithMA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <XAxis dataKey="shortDate" stroke="#475569" fontSize={10} tickMargin={8} minTickGap={20} />
               <YAxis stroke="#475569" fontSize={10} tickFormatter={(v) => `${v}g`} />
@@ -173,7 +173,7 @@ export const FeedingTrendChart: React.FC<FeedingTrendChartProps> = ({
             </ComposedChart>
           </ResponsiveContainer>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={weeklyTrend} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <XAxis dataKey="week" tickFormatter={(v) => v.split(' ')[0] + ' ' + v.split(' ')[1]} stroke="#475569" fontSize={10} tickMargin={8} />
               <YAxis stroke="#475569" fontSize={10} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />

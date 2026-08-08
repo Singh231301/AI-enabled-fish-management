@@ -20,7 +20,47 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchNotifications = async () => {
-    // Stub
+    // Mock data for frontend preview
+    if (notifications.length === 0) {
+      setNotifications([
+        {
+          id: '1',
+          userId: 'user1',
+          title: 'Water Quality Alert',
+          message: 'pH level in Pond 1 has dropped to 6.2 (Action Required)',
+          type: 'WATER_QUALITY_ALERT',
+          priority: 'HIGH',
+          isRead: false,
+          isDismissed: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          userId: 'user1',
+          title: 'Feeding Reminder',
+          message: 'Time for evening feed in Pond 2 (Growth phase)',
+          type: 'FEEDING_REMINDER',
+          priority: 'MEDIUM',
+          isRead: false,
+          isDismissed: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '3',
+          userId: 'user1',
+          title: 'Low Stock Warning',
+          message: 'Starter Feed inventory is below 50kg.',
+          type: 'LOW_STOCK',
+          priority: 'LOW',
+          isRead: true,
+          isDismissed: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ]);
+    }
   };
 
   const markAsRead = async (id: string) => {

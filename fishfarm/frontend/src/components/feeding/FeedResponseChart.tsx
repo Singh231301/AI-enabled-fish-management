@@ -85,7 +85,7 @@ export const FeedResponseChart: React.FC<FeedResponseChartProps> = ({
   const bgClass = getScoreColor(healthScore).split(' ')[1];
 
   return (
-    <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden flex flex-col h-full">
+    <div className="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
       <div className="flex justify-between items-center p-4 border-b border-slate-800">
         <h3 className="text-white font-bold flex items-center gap-2">🐟 Fish Response Quality</h3>
         
@@ -107,7 +107,7 @@ export const FeedResponseChart: React.FC<FeedResponseChartProps> = ({
         )}
       </div>
 
-      <div className="p-4 flex-grow flex flex-col justify-center">
+      <div className="p-4 w-full" style={{ height: '300px' }}>
         {view === 'breakdown' ? (
           <>
             <div className="space-y-4 mb-6">
@@ -146,8 +146,8 @@ export const FeedResponseChart: React.FC<FeedResponseChartProps> = ({
             </div>
           </>
         ) : (
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full h-full">
+            <ResponsiveContainer width="100%" height={240}>
               <LineChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <XAxis dataKey="date" stroke="#475569" fontSize={10} tickMargin={8} minTickGap={20} />
                 <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} stroke="#475569" fontSize={10} />

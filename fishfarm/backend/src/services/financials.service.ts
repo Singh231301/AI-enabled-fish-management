@@ -70,12 +70,14 @@ export class FinancialService {
       totalAmount = dto.quantity * dto.unitPrice;
     }
 
+    const { pondId, ...restDto } = dto;
+    
     const expense = await this.expenseRepo.create({
-      ...dto,
+      ...restDto,
       totalAmount,
       expenseDate: new Date(dto.expenseDate),
       category: dto.category as ExpenseCategory,
-      pond: { connect: { id: dto.pondId } },
+      pond: { connect: { id: pondId } },
       user: { connect: { id: userId } }
     });
 

@@ -76,7 +76,7 @@ export class AiService {
   ) {
     this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '');
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-flash-latest',
       generationConfig: {
         temperature: 0.7,
         topP: 0.8,
