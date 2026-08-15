@@ -214,12 +214,13 @@ const ReportsPage: React.FC = () => {
                   <p style={{ color: '#94a3b8', marginBottom: '24px' }}>Download raw data for specific modules for further analysis in Excel or other tools.</p>
                   
                   <DataTableExport title="Full Farm Backup" moduleName="all" onExport={handleCsvExport('all')} />
-                  <DataTableExport title="Feeding Logs" moduleName="feeding" onExport={handleCsvExport('feeding')} />
-                  <DataTableExport title="Water Quality Logs" moduleName="water" onExport={handleCsvExport('water')} />
-                  <DataTableExport title="Mortality Records" moduleName="mortality" onExport={handleCsvExport('mortality')} />
-                  <DataTableExport title="Growth Samples" moduleName="growth" onExport={handleCsvExport('growth')} />
-                  <DataTableExport title="Financial Transactions" moduleName="financials" onExport={handleCsvExport('financials')} />
-                  <DataTableExport title="Inventory Usage" moduleName="inventory" onExport={handleCsvExport('inventory')} />
+                  <DataTableExport title="Feeding Logs" moduleName="feeding_logs" onExport={handleCsvExport('feeding_logs')} />
+                  <DataTableExport title="Water Quality Logs" moduleName="water_quality_logs" onExport={handleCsvExport('water_quality_logs')} />
+                  <DataTableExport title="Mortality Records" moduleName="mortality_logs" onExport={handleCsvExport('mortality_logs')} />
+                  <DataTableExport title="Growth Samples" moduleName="growth_samples" onExport={handleCsvExport('growth_samples')} />
+                  <DataTableExport title="Financial Expenses" moduleName="expenses" onExport={handleCsvExport('expenses')} />
+                  <DataTableExport title="Financial Sales" moduleName="sales" onExport={handleCsvExport('sales')} />
+                  <DataTableExport title="Inventory Usage" moduleName="inventory_transactions" onExport={handleCsvExport('inventory_transactions')} />
                 </div>
               </div>
             )}

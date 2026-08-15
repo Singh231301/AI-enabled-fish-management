@@ -20,7 +20,9 @@ export const AIChatPage: React.FC = () => {
   const [selectedPondId, setSelectedPondId] = useState<string | null>(null);
   const [selectedPondName, setSelectedPondName] = useState<string>('');
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Chat');
+  const [externalQuery, setExternalQuery] = useState<{ text: string; timestamp: number } | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     const load = async () => {
@@ -156,30 +158,62 @@ export const AIChatPage: React.FC = () => {
               <ChatInterface
                 pondId={selectedPondId}
                 selectedPondName={selectedPondName}
+                externalQuery={externalQuery}
               />
             </div>
 
             {/* Right Sidebar - Suggestions */}
             {selectedPondId && (
-              <div style={{
-                width: 320,
-                borderLeft: '1px solid rgba(255,255,255,0.06)',
-                overflowY: 'auto',
-                padding: 16,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                scrollbarWidth: 'thin',
-              }}>
-                <h3 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: 0 }}>
-                  💡 Suggested Questions
-                </h3>
-                <SuggestedQuestions
+              <>
+                {!isSidebarOpen && (
+                  <div style={{
+                    borderLeft: '1px solid rgba(255,255,255,0.06)',
+                    padding: '16px 8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: 'rgba(15, 23, 42, 0.3)'
+                  }}>
+                    <button 
+                      onClick={() => setIsSidebarOpen(true)}
+                      style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 20, padding: 8, borderRadius: 8 }}
+                      title="Show Suggestions"
+                    >
+                      💡
+                    </button>
+                  </div>
+                )}
+                {isSidebarOpen && (
+                  <div style={{
+                    width: 320,
+                    borderLeft: '1px solid rgba(255,255,255,0.06)',
+                    overflowY: 'auto',
+                    padding: 16,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    scrollbarWidth: 'thin',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h3 style={{ color: '#fff', fontSize: 14, fontWeight: 600, margin: 0 }}>
+                        💡 Suggested Questions
+                      </h3>
+                      <button 
+                        onClick={() => setIsSidebarOpen(false)}
+                        style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 16, padding: '4px 8px', borderRadius: 4 }}
+                        title="Close Suggestions"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <SuggestedQuestions
                   pondId={selectedPondId}
-                  onSelect={() => {}}
+                  onSelect={(q) => setExternalQuery({ text: q, timestamp: Date.now() })}
                 />
                 <FarmHealthScore pondId={selectedPondId} />
-              </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

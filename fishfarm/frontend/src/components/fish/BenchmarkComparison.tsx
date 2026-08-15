@@ -12,9 +12,9 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({ growth
 
   if (!latestSample) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Benchmark Comparison</h3>
-        <p className="text-gray-500 text-sm">No growth samples recorded yet.</p>
+      <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700">
+        <h3 className="text-lg font-bold text-white mb-4">Benchmark Comparison</h3>
+        <p className="text-slate-400 text-sm">No growth samples recorded yet.</p>
       </div>
     );
   }
@@ -25,25 +25,25 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({ growth
   const isBehind = variancePercent !== null && variancePercent < 0;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-full">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Benchmark Comparison</h3>
+    <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700 h-full">
+      <h3 className="text-lg font-bold text-white mb-4">Benchmark Comparison</h3>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-          <p className="text-xs text-gray-500 mb-1">Actual Weight (Week {Math.floor(fishAgeWeeks)})</p>
-          <p className="text-2xl font-bold text-gray-900">{averageWeightGrams}g</p>
+        <div className="bg-slate-750 p-4 rounded-lg border border-slate-700/50">
+          <p className="text-xs text-slate-400 mb-1">Actual Weight (Week {Math.floor(fishAgeWeeks)})</p>
+          <p className="text-2xl font-bold text-white">{averageWeightGrams}g</p>
         </div>
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-          <p className="text-xs text-gray-500 mb-1">Benchmark Expected</p>
-          <p className="text-2xl font-bold text-gray-900">{benchmarkWeight ? `${benchmarkWeight}g` : 'N/A'}</p>
+        <div className="bg-slate-750 p-4 rounded-lg border border-slate-700/50">
+          <p className="text-xs text-slate-400 mb-1">Benchmark Expected</p>
+          <p className="text-2xl font-bold text-white">{benchmarkWeight ? `${benchmarkWeight}g` : 'N/A'}</p>
         </div>
       </div>
 
       {variancePercent !== null && (
         <div className={`mb-6 p-4 rounded-lg border ${
-          isAhead ? 'bg-green-50 border-green-200 text-green-800' : 
-          isBehind && variancePercent < -15 ? 'bg-red-50 border-red-200 text-red-800' : 
-          'bg-yellow-50 border-yellow-200 text-yellow-800'
+          isAhead ? 'bg-green-50 border-green-200 text-green-300' : 
+          isBehind && variancePercent < -15 ? 'bg-red-50 border-red-200 text-red-300' : 
+          'bg-yellow-50 border-yellow-200 text-yellow-300'
         }`}>
           <div className="flex items-center font-semibold mb-1">
             <Target className="w-5 h-5 mr-2" />
@@ -57,14 +57,14 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({ growth
 
       {estimatedHarvestDate && (
         <div className="flex items-start">
-          <Calendar className="w-10 h-10 text-blue-500 mr-3 flex-shrink-0" />
+          <Calendar className="w-10 h-10 text-sky-400 mr-3 flex-shrink-0" />
           <div>
-            <h4 className="text-sm font-semibold text-gray-900">Estimated Harvest</h4>
-            <p className="text-sm text-gray-600 mb-1">
-              Target 700g on <span className="font-bold text-gray-900">{format(new Date(estimatedHarvestDate), 'MMM d, yyyy')}</span>
+            <h4 className="text-sm font-semibold text-white">Estimated Harvest</h4>
+            <p className="text-sm text-slate-300 mb-1">
+              Target 700g on <span className="font-bold text-white">{format(new Date(estimatedHarvestDate), 'MMM d, yyyy')}</span>
             </p>
             {gramsPerDay && (
-              <p className="text-xs text-gray-500">Current growth rate: {gramsPerDay.toFixed(1)}g / day</p>
+              <p className="text-xs text-slate-400">Current growth rate: {gramsPerDay.toFixed(1)}g / day</p>
             )}
           </div>
         </div>

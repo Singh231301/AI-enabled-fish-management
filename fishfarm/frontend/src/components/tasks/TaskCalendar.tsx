@@ -62,42 +62,42 @@ export const TaskCalendar: React.FC<TaskCalendarProps> = ({ onTaskClick }) => {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-        <h2 className="text-lg font-bold text-slate-800">
+    <div className="bg-slate-800 rounded-xl  border border-slate-700 overflow-hidden flex flex-col h-full">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-800/50">
+        <h2 className="text-lg font-bold text-white">
           {format(currentDate, 'MMMM yyyy')}
         </h2>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrevMonth} className="p-1.5 hover:bg-slate-200 rounded-lg text-slate-600 transition-colors">
+          <button onClick={handlePrevMonth} className="p-1.5 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setCurrentDate(new Date())} 
-            className="px-3 py-1 text-sm font-medium hover:bg-slate-200 rounded-lg text-slate-600 transition-colors"
+            className="px-3 py-1 text-sm font-medium hover:bg-slate-700 rounded-lg text-slate-300 transition-colors"
           >
             Today
           </button>
-          <button onClick={handleNextMonth} className="p-1.5 hover:bg-slate-200 rounded-lg text-slate-600 transition-colors">
+          <button onClick={handleNextMonth} className="p-1.5 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-slate-100 bg-slate-50/50">
+      <div className="grid grid-cols-7 border-b border-slate-700 bg-slate-800/50/50">
         {weekDays.map(day => (
-          <div key={day} className="py-2 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <div key={day} className="py-2 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="flex-1 grid grid-cols-7 auto-rows-fr bg-slate-100 gap-px">
+      <div className="flex-1 grid grid-cols-7 auto-rows-fr bg-slate-900 gap-px">
         {isLoading && paddedDays.length === 0 ? (
           <div className="col-span-7 p-12 text-center text-slate-400">Loading calendar...</div>
         ) : (
           paddedDays.map((day, index) => {
             if (!day) {
-              return <div key={`empty-${index}`} className="bg-slate-50/50 min-h-[120px]"></div>;
+              return <div key={`empty-${index}`} className="bg-slate-800/50/50 min-h-[120px]"></div>;
             }
 
             const dateObj = new Date(day.date);
@@ -107,10 +107,10 @@ export const TaskCalendar: React.FC<TaskCalendarProps> = ({ onTaskClick }) => {
             return (
               <div 
                 key={day.date} 
-                className={`bg-white min-h-[120px] p-2 hover:bg-slate-50 transition-colors flex flex-col ${!isCurrentMonth ? 'opacity-50' : ''}`}
+                className={`bg-slate-800 min-h-[120px] p-2 hover:bg-slate-800/50 transition-colors flex flex-col ${!isCurrentMonth ? 'opacity-50' : ''}`}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className={`text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${today ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-700'}`}>
+                  <span className={`text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${today ? 'bg-sky-500 text-white ' : 'text-slate-300'}`}>
                     {dateObj.getDate()}
                   </span>
                   <div className="flex gap-1">
@@ -126,16 +126,16 @@ export const TaskCalendar: React.FC<TaskCalendarProps> = ({ onTaskClick }) => {
                       key={task.id}
                       onClick={() => onTaskClick(task)}
                       className={`text-xs px-1.5 py-1 rounded truncate cursor-pointer transition-colors ${
-                        task.status === 'COMPLETED' ? 'bg-green-50 text-green-700 hover:bg-green-100 line-through opacity-70' :
-                        task.status === 'OVERDUE' || (task.status === 'PENDING' && isPast(new Date(task.dueDate)) && !isToday(new Date(task.dueDate))) ? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-100' :
-                        'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-100'
+                        task.status === 'COMPLETED' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/20 line-through opacity-70' :
+                        task.status === 'OVERDUE' || (task.status === 'PENDING' && isPast(new Date(task.dueDate)) && !isToday(new Date(task.dueDate))) ? 'bg-red-50 text-red-700 hover:bg-red-500/20 border border-red-100' :
+                        'bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 border border-blue-100'
                       }`}
                     >
                       {task.title}
                     </div>
                   ))}
                   {day.tasks.length > 4 && (
-                    <div className="text-xs text-center text-slate-500 font-medium py-1 bg-slate-50 rounded">
+                    <div className="text-xs text-center text-slate-400 font-medium py-1 bg-slate-800/50 rounded">
                       +{day.tasks.length - 4} more
                     </div>
                   )}

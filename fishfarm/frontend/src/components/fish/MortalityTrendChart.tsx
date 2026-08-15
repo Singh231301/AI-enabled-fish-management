@@ -11,15 +11,15 @@ export const MortalityTrendChart: React.FC<MortalityTrendChartProps> = ({ mortal
 
   if (dailyTrend.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex items-center justify-center h-80">
-        <p className="text-gray-500">No mortality data in the last 30 days.</p>
+      <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700 flex items-center justify-center h-80">
+        <p className="text-slate-400">No mortality data in the last 30 days.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Mortality Trend (Last 30 Days)</h3>
+    <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700">
+      <h3 className="text-lg font-bold text-white mb-4">Mortality Trend (Last 30 Days)</h3>
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

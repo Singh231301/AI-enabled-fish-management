@@ -65,7 +65,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit,
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {isAuto && (
-        <div className="bg-blue-50 text-blue-800 p-4 rounded-lg flex items-start gap-3">
+        <div className="bg-blue-900/20 text-blue-400 p-4 rounded-lg flex items-start gap-3">
           <span className="text-xl">ℹ️</span>
           <div>
             <h4 className="font-semibold">Auto-Generated Record</h4>
@@ -76,22 +76,22 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit,
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Date *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Date *</label>
           <input 
             type="date" 
             {...register('expenseDate')}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500" 
           />
           {errors.expenseDate && <p className="text-red-500 text-xs mt-1">{errors.expenseDate.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Category *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Category *</label>
           <select 
             {...register('category')}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100"
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500"
           >
             <option value="">Select Category</option>
             {categories.map(cat => (
@@ -104,55 +104,55 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit,
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Item Description *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Item Description *</label>
           <input 
             type="text" 
             placeholder="What was purchased?"
             {...register('itemName')}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500" 
           />
           {errors.itemName && <p className="text-red-500 text-xs mt-1">{errors.itemName.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Quantity</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Quantity</label>
           <input 
             type="number" 
             step="0.01"
             placeholder="e.g. 50"
             {...register('quantity', { valueAsNumber: true })}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500" 
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Unit</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Unit</label>
           <input 
             type="text" 
             placeholder="e.g. kg, pieces, liters"
             {...register('unit')}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500" 
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Unit Price (₹)</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Unit Price (₹)</label>
           <input 
             type="number" 
             step="0.01"
             {...register('unitPrice', { valueAsNumber: true })}
             disabled={isAuto}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500" 
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
+          <label className="block text-sm font-medium text-slate-300 mb-1 flex justify-between">
             <span>Total Amount (₹) *</span>
-            <span className="text-xs text-sky-600 cursor-pointer" onClick={() => setAutoCalc(!autoCalc)}>
+            <span className="text-xs text-sky-400 cursor-pointer" onClick={() => setAutoCalc(!autoCalc)}>
               {autoCalc ? 'Auto-calculating' : 'Manual entry'}
             </span>
           </label>
@@ -161,34 +161,34 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit,
             step="0.01"
             {...register('totalAmount', { valueAsNumber: true })}
             disabled={isAuto || (autoCalc && !!qty && !!price)}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-100 font-bold" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500 disabled:bg-slate-800/50 disabled:text-slate-500 font-bold" 
           />
           {errors.totalAmount && <p className="text-red-500 text-xs mt-1">{errors.totalAmount.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Vendor/Supplier Name</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Vendor/Supplier Name</label>
           <input 
             type="text" 
             {...register('vendorName')}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500" 
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Receipt/Bill Number</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Receipt/Bill Number</label>
           <input 
             type="text" 
             {...register('receiptNumber')}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500" 
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Payment Method</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Payment Method</label>
           <select 
             {...register('paymentMethod')}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500"
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500"
           >
             <option value="">Select Method</option>
             {paymentMethods.map(pm => (
@@ -200,28 +200,28 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ initialData, onSubmit,
         </div>
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Additional Notes</label>
           <textarea 
             {...register('notes')}
             rows={2}
-            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" 
+            className="w-full rounded-lg bg-slate-800 border-slate-700 text-white shadow-sm focus:border-sky-500 focus:ring-sky-500" 
           />
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4 border-t">
+      <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
         <button
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg transition-colors"
+          className="px-4 py-2 text-slate-400 font-medium hover:bg-slate-800 hover:text-white rounded-lg transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isLoading}
-          className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+          className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-500 transition-colors disabled:opacity-50"
         >
           {isLoading ? 'Saving...' : initialData ? 'Update Expense' : 'Save Expense'}
         </button>

@@ -6,6 +6,7 @@ import { FeedRecommendation, FeedingLog, FeedType, FishResponseType, CreateFeedi
 import { FEED_TYPE_CONFIG, FISH_RESPONSE_CONFIG } from '../../utils/constants';
 import toast from 'react-hot-toast';
 import { X, Clock, Scale } from 'lucide-react';
+import { Modal } from '../common/Modal';
 
 const feedingLogSchema = z.object({
   feedDate: z.string().min(1, "Date required"),
@@ -103,16 +104,17 @@ export const FeedingLogForm: React.FC<FeedingLogFormProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
-      <div className="bg-slate-900 rounded-xl w-full max-w-2xl border border-slate-700 shadow-2xl mt-10 mb-10">
-        <div className="flex justify-between items-center p-4 border-b border-slate-800">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            {existingLog ? "✏️ Edit Feeding Log" : "🍽️ Log Feeding Session"}
-          </h2>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white">
-            <X size={24} />
-          </button>
-        </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      title={
+        <span className="flex items-center gap-2">
+          {existingLog ? "✏️ Edit Feeding Log" : "🍽️ Log Feeding Session"}
+        </span>
+      }
+      size="lg"
+    >
+      <div className="space-y-0">
 
         {recommendation && !existingLog && (
           <div className="bg-sky-900/30 border-b border-sky-900/50 p-3 text-sky-200 text-sm text-center">
@@ -267,6 +269,6 @@ export const FeedingLogForm: React.FC<FeedingLogFormProps> = ({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };

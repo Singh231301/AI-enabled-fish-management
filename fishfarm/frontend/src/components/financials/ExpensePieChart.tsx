@@ -10,7 +10,7 @@ interface ExpensePieChartProps {
 export const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-slate-500 bg-slate-50 rounded-lg">
+      <div className="h-64 flex items-center justify-center text-slate-400 bg-slate-800/50 rounded-lg">
         No expense data available for this period.
       </div>
     );
@@ -41,7 +41,8 @@ export const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ data }) => {
           </Pie>
           <Tooltip 
             formatter={(value: number) => `₹${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', border: '1px solid #1e293b', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', color: '#f8fafc' }}
+            itemStyle={{ color: '#e2e8f0' }}
           />
           <Legend layout="vertical" verticalAlign="middle" align="right" />
         </PieChart>

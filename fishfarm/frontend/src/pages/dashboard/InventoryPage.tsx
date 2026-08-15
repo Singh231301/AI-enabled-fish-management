@@ -38,6 +38,8 @@ import {
   Filter
 } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
+import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import { toast } from 'react-hot-toast';
 
 export const InventoryPage: React.FC = () => {
   const [ponds, setPonds] = useState<any[]>([]); const [selectedPond, setSelectedPond] = useState<any>(null); useEffect(() => { pondApi.getUserPonds().then(res => { setPonds(res.data); if (res.data.length > 0) setSelectedPond(res.data[0]); }); }, []);
@@ -53,6 +55,7 @@ export const InventoryPage: React.FC = () => {
   const [showUsageModal, setShowUsageModal] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   // Selected items for modals
   const [selectedItem, setSelectedItem] = useState<EnrichedInventoryItem | null>(null);
@@ -108,6 +111,24 @@ export const InventoryPage: React.FC = () => {
     }
   };
 
+  const handleDeleteItem = async () => {
+    if (!selectedPond || !selectedItem) return;
+    setIsSubmitting(true);
+    try {
+      await inventoryApi.deleteItem(selectedPond.id, selectedItem.id);
+      setShowDeleteConfirm(false);
+      setShowItemModal(false);
+      setSelectedItem(null);
+      toast.success('Item deleted successfully');
+      loadData();
+    } catch (error) {
+      console.error("Failed to delete item", error);
+      toast.error('Failed to delete item');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleRecordPurchase = async (dto: RecordPurchaseDTO) => {
     if (!selectedPond) return;
     setIsSubmitting(true);
@@ -118,7 +139,7 @@ export const InventoryPage: React.FC = () => {
       loadData();
     } catch (error) {
       console.error("Failed to record purchase", error);
-      alert(error instanceof Error ? error.message : "Failed to record purchase");
+      toast.error((error as any)?.response?.data?.message || (error instanceof Error ? error.message : "Failed to record purchase"));
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +155,7 @@ export const InventoryPage: React.FC = () => {
       loadData();
     } catch (error) {
       console.error("Failed to record usage", error);
-      alert(error instanceof Error ? error.message : "Failed to record usage");
+      toast.error((error as any)?.response?.data?.message || (error instanceof Error ? error.message : "Failed to record usage"));
     } finally {
       setIsSubmitting(false);
     }
@@ -198,8 +219,8 @@ export const InventoryPage: React.FC = () => {
       {/* Header & Quick Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Inventory Management</h1>
-          <p className="text-slate-500">Track feed, chemicals, and equipment</p>
+          <h1 className="text-2xl font-bold text-white">Inventory Management</h1>
+          <p className="text-slate-400">Track feed, chemicals, and equipment</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
@@ -212,21 +233,21 @@ export const InventoryPage: React.FC = () => {
           </button>
           <button
             onClick={() => setShowPurchaseModal(true)}
-            className="flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium"
+            className="flex items-center px-4 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-medium shadow-sm"
           >
             <ArrowDownToLine size={16} className="mr-1.5 text-green-600" />
             Record Purchase
           </button>
           <button
             onClick={() => setShowUsageModal(true)}
-            className="flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium"
+            className="flex items-center px-4 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-medium shadow-sm"
           >
             <ArrowUpFromLine size={16} className="mr-1.5 text-blue-600" />
             Log Usage
           </button>
           <button
             onClick={() => setShowMaintenanceModal(true)}
-            className="flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium"
+            className="flex items-center px-4 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-medium shadow-sm"
           >
             <Wrench size={16} className="mr-1.5 text-orange-500" />
             Schedule Maint.
@@ -246,7 +267,7 @@ export const InventoryPage: React.FC = () => {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex space-x-1 border-b border-slate-200">
+      <div className="flex space-x-1 border-b border-slate-800">
         {[
           { id: 'overview', label: 'Overview' },
           { id: 'items', label: 'All Items' },
@@ -258,8 +279,8 @@ export const InventoryPage: React.FC = () => {
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.id
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                ? 'border-blue-600 text-blue-400'
+                : 'border-transparent text-slate-400 hover:text-white hover:border-slate-600'
             }`}
           >
             {tab.label}
@@ -307,7 +328,7 @@ export const InventoryPage: React.FC = () => {
                   placeholder="Search items..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow placeholder:text-slate-500"
                 />
               </div>
               <div className="relative md:w-48">
@@ -315,7 +336,7 @@ export const InventoryPage: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={e => setCategoryFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
                 >
                   <option value="">All Categories</option>
                   <option value="FEED">Feed</option>
@@ -347,8 +368,8 @@ export const InventoryPage: React.FC = () => {
 
         {activeTab === 'equipment' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl border p-6">
-              <h2 className="text-lg font-bold text-slate-800 mb-6">Upcoming Maintenance</h2>
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6">
+              <h2 className="text-lg font-bold text-white mb-6">Upcoming Maintenance</h2>
               {data.stats.upcomingMaintenance.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {data.stats.upcomingMaintenance.map(maintenance => (
@@ -370,7 +391,7 @@ export const InventoryPage: React.FC = () => {
               )}
             </div>
             
-            <h2 className="text-lg font-bold text-slate-800 mt-8 mb-4">Equipment Directory</h2>
+            <h2 className="text-lg font-bold text-white mt-8 mb-4">Equipment Directory</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {data.allItems
                 .filter(i => i.category === 'EQUIPMENT' || i.category === 'TOOL')
@@ -398,6 +419,7 @@ export const InventoryPage: React.FC = () => {
           initialData={selectedItem as any}
           onSubmit={(dto) => selectedItem ? handleUpdateItem(dto as any) : handleCreateItem(dto)}
           onCancel={() => setShowItemModal(false)}
+          onDelete={() => setShowDeleteConfirm(true)}
           isLoading={isSubmitting}
         />
       </Modal>
@@ -458,6 +480,14 @@ export const InventoryPage: React.FC = () => {
           />
         )}
       </Modal>
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Inventory Item"
+        message={`Are you sure you want to delete ${selectedItem?.itemName}? This action cannot be undone.`}
+        confirmText="Delete Item"
+        onConfirm={handleDeleteItem}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 };

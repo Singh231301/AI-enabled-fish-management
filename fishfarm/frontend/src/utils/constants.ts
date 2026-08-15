@@ -232,17 +232,21 @@ export const WATER_SMELL_CONFIG: Record<string, Record<string, any>> = {
 };
 
 export const DO_STATUS_CONFIG: Record<string, Record<string, any>> = {
-  OPTIMAL: { label: 'Optimal', color: 'text-green-400', bgColor: 'bg-green-500/10' },
-  ACCEPTABLE: { label: 'Acceptable', color: 'text-blue-400', bgColor: 'bg-blue-500/10' },
+  EXCELLENT: { label: 'Excellent', color: 'text-green-400', bgColor: 'bg-green-500/10' },
+  NORMAL: { label: 'Normal', color: 'text-sky-400', bgColor: 'bg-sky-500/10' },
   LOW: { label: 'Low', color: 'text-amber-400', bgColor: 'bg-amber-500/10' },
-  CRITICAL: { label: 'Critical', color: 'text-red-400', bgColor: 'bg-red-500/10' }
+  VERY_LOW: { label: 'Very Low', color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
+  CRITICAL: { label: 'Critical', color: 'text-red-400', bgColor: 'bg-red-500/10' },
+  NO_DATA: { label: 'No Data', color: 'text-slate-400', bgColor: 'bg-slate-500/10' }
 };
 
 export const PH_STATUS_CONFIG: Record<string, Record<string, any>> = {
-  OPTIMAL: { label: 'Optimal', color: 'text-green-400', bgColor: 'bg-green-500/10' },
-  ACCEPTABLE: { label: 'Acceptable', color: 'text-blue-400', bgColor: 'bg-blue-500/10' },
-  LOW_DANGER: { label: 'Low (Danger)', color: 'text-red-400', bgColor: 'bg-red-500/10' },
-  HIGH_DANGER: { label: 'High (Danger)', color: 'text-red-400', bgColor: 'bg-red-500/10' }
+  NORMAL: { label: 'Optimal', color: 'text-green-400', bgColor: 'bg-green-500/10' },
+  LOW: { label: 'Low', color: 'text-amber-400', bgColor: 'bg-amber-500/10' },
+  HIGH: { label: 'High', color: 'text-amber-400', bgColor: 'bg-amber-500/10' },
+  CRITICAL_LOW: { label: 'Critical Low', color: 'text-red-400', bgColor: 'bg-red-500/10' },
+  CRITICAL_HIGH: { label: 'Critical High', color: 'text-red-400', bgColor: 'bg-red-500/10' },
+  NO_DATA: { label: 'No Data', color: 'text-slate-400', bgColor: 'bg-slate-500/10' }
 };
 
 export const CHEMICAL_TYPE_CONFIG: Record<string, Record<string, any>> = {

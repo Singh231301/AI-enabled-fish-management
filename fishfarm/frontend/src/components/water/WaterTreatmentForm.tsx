@@ -7,6 +7,7 @@ import { CHEMICAL_TYPE_CONFIG } from '../../utils/constants';
 import { waterApi } from '../../api/endpoints/water.api';
 import toast from 'react-hot-toast';
 import { X, Calculator } from 'lucide-react';
+import { Modal } from '../common/Modal';
 
 const treatmentSchema = z.object({
   treatmentDate: z.string().min(1, "Date required"),
@@ -168,20 +169,20 @@ export const WaterTreatmentForm: React.FC<WaterTreatmentFormProps> = ({
   const isExcessiveLime = isAgriLime && quantityKg > maxSafeLime;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl border border-slate-700 overflow-hidden my-8">
-        <div className="flex justify-between items-center p-6 border-b border-slate-800">
-          <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <span>🧪</span>
-              {existingTreatment ? "Edit Water Treatment" : "Log Water Treatment"}
-            </h2>
-            <p className="text-sm text-slate-400 mt-1">Record any chemical application to the pond</p>
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      title={
+        <div>
+          <div className="flex items-center gap-2">
+            <span>🧪</span>
+            {existingTreatment ? "Edit Water Treatment" : "Log Water Treatment"}
           </div>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white transition-colors">
-            <X size={24} />
-          </button>
+          <p className="text-sm text-slate-400 mt-1 font-normal">Record any chemical application to the pond</p>
         </div>
+      }
+      size="lg"
+    >
 
         <div className="p-4 bg-amber-900/20 border-b border-amber-700/50">
           <p className="text-amber-300 text-sm font-medium mb-1">⚠️ Important Safety Rules:</p>
@@ -248,7 +249,7 @@ export const WaterTreatmentForm: React.FC<WaterTreatmentFormProps> = ({
               <input
                 type="number"
                 step="0.1"
-                {...register('quantityKg')}
+                {...register('quantityKg', { valueAsNumber: true })}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
               {errors.quantityKg && <p className="text-red-400 text-xs mt-1">{errors.quantityKg.message as string}</p>}
@@ -389,7 +390,7 @@ export const WaterTreatmentForm: React.FC<WaterTreatmentFormProps> = ({
 
         </form>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-slate-800 bg-slate-900">
+        <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-slate-800">
           <button
             type="button"
             onClick={onCancel}
@@ -405,7 +406,6 @@ export const WaterTreatmentForm: React.FC<WaterTreatmentFormProps> = ({
             {isSubmitting ? "Saving..." : existingTreatment ? "Update Treatment" : "Log Treatment"}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

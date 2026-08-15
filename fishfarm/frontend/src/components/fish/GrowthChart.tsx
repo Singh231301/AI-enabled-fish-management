@@ -11,15 +11,15 @@ export const GrowthChart: React.FC<GrowthChartProps> = ({ growthSummary }) => {
 
   if (chartData.combined.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex items-center justify-center h-80">
-        <p className="text-gray-500">Not enough data to display growth chart.</p>
+      <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700 flex items-center justify-center h-80">
+        <p className="text-slate-400">Not enough data to display growth chart.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Growth vs Benchmark</h3>
+    <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700">
+      <h3 className="text-lg font-bold text-white mb-4">Growth vs Benchmark</h3>
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -42,7 +42,7 @@ export const GrowthChart: React.FC<GrowthChartProps> = ({ growthSummary }) => {
             />
             <Tooltip
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-              formatter={(value: number) => [`${value}g`, undefined]}
+              formatter={(value: number) => [`${typeof value === 'number' ? value.toFixed(2) : value}g`, undefined]}
               labelFormatter={(label) => `Day ${label}`}
             />
             <Legend verticalAlign="top" height={36} />

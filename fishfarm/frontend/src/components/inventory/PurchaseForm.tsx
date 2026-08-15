@@ -59,12 +59,12 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Select Item *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Select Item *</label>
           <select
             required
             value={formData.inventoryId}
             onChange={e => setFormData({ ...formData, inventoryId: e.target.value })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
           >
             <option value="" disabled>Select an inventory item...</option>
             {items.map(item => (
@@ -76,18 +76,18 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Purchase Date *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Purchase Date *</label>
           <input
             type="date"
             required
             value={formData.purchaseDate}
             onChange={e => setFormData({ ...formData, purchaseDate: e.target.value })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Quantity Purchased *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Quantity Purchased *</label>
           <div className="relative">
             <input
               type="number"
@@ -96,7 +96,7 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
               step="0.01"
               value={formData.quantity || ''}
               onChange={e => setFormData({ ...formData, quantity: parseFloat(e.target.value) })}
-              className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+              className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
             />
             <span className="absolute right-4 top-2 text-slate-400">
               {selectedItem?.unit || 'units'}
@@ -105,7 +105,7 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Unit Cost (₹)</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Unit Cost (₹)</label>
           <input
             type="number"
             min="0"
@@ -119,56 +119,56 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
                 totalCost: (formData.quantity && !isNaN(val)) ? formData.quantity * val : formData.totalCost 
               });
             }}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Total Cost (₹)</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Total Cost (₹)</label>
           <input
             type="number"
             min="0"
             step="0.01"
             value={formData.totalCost || ''}
             onChange={e => setFormData({ ...formData, totalCost: e.target.value ? parseFloat(e.target.value) : undefined })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-slate-50"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow bg-slate-50"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Supplier</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Supplier</label>
           <input
             type="text"
             value={formData.supplier || ''}
             onChange={e => setFormData({ ...formData, supplier: e.target.value })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
             placeholder={selectedItem?.supplier || "Supplier name"}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Invoice Number</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Invoice Number</label>
           <input
             type="text"
             value={formData.invoiceNumber || ''}
             onChange={e => setFormData({ ...formData, invoiceNumber: e.target.value })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
             placeholder="INV-12345"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Notes</label>
           <input
             type="text"
             value={formData.notes || ''}
             onChange={e => setFormData({ ...formData, notes: e.target.value })}
-            className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-4 py-2 border border-slate-700 bg-slate-800 text-white placeholder-slate-500 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-shadow"
             placeholder="Any additional details..."
           />
         </div>
 
-        <div className="md:col-span-2 flex items-center mt-2 p-3 bg-blue-50/50 rounded-xl border border-blue-100">
+        <div className="md:col-span-2 flex items-center mt-2 p-3 bg-blue-900/20 rounded-xl border border-blue-900/50">
           <input
             type="checkbox"
             id="createExpense"
@@ -182,12 +182,12 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-end space-x-3 pt-6 border-t border-slate-100">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-slate-800">
         <button
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="px-6 py-2 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium"
+          className="px-6 py-2 border border-slate-700 bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition-colors font-medium"
         >
           Cancel
         </button>

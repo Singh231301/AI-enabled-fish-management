@@ -92,36 +92,36 @@ export const MortalityLogForm: React.FC<MortalityLogFormProps> = ({
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         
-        <div className="bg-blue-50 text-blue-800 p-3 rounded-md text-sm mb-4 border border-blue-200">
-          <strong>Context:</strong> Estimated currently alive fish: <span className="font-semibold">{estimatedAlive}</span>
+        <div className="bg-sky-500/10 text-sky-400 p-3 rounded-md text-sm mb-4 border border-sky-500/20">
+          <strong>Context:</strong> Estimated currently alive fish: <span className="font-semibold text-sky-300">{estimatedAlive}</span>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Date *</label>
           <input
             type="date"
             {...register("logDate")}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.logDate ? 'border-red-500' : 'border-gray-300'}`}
+            className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.logDate ? 'border-red-500' : 'border-slate-600'}`}
           />
           {errors.logDate && <p className="mt-1 text-xs text-red-500">{errors.logDate.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Dead Count *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Dead Count *</label>
           <input
             type="number"
             {...register("deadCount")}
-            className={`w-full px-4 py-3 text-lg border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.deadCount ? 'border-red-500' : 'border-gray-300'}`}
+            className={`w-full px-4 py-3 text-lg bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.deadCount ? 'border-red-500' : 'border-slate-600'}`}
             placeholder="e.g., 5"
           />
           {errors.deadCount && <p className="mt-1 text-xs text-red-500">{errors.deadCount.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Probable Reason</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Probable Reason</label>
           <select
             {...register("probableReason")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
+            className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500 bg-slate-800"
           >
             <option value="">Select a reason (optional)</option>
             {REASON_OPTIONS.map(opt => (
@@ -131,37 +131,37 @@ export const MortalityLogForm: React.FC<MortalityLogFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Action Taken</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Action Taken</label>
           <textarea
             rows={2}
             {...register("actionTaken")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
             placeholder="e.g., Applied oxygen tablets"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Notes</label>
           <textarea
             rows={2}
             {...register("notes")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
             placeholder="Additional notes..."
           />
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-slate-700">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium transition-colors"
+            className="px-4 py-2 border border-slate-600 text-slate-300 rounded-md hover:bg-slate-750 font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 font-medium shadow-sm transition-colors"
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 font-medium  transition-colors"
           >
             {isSubmitting ? 'Saving...' : 'Save Mortality Log'}
           </button>

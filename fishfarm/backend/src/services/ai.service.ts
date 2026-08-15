@@ -34,7 +34,9 @@ YOUR EXPERTISE:
 
 YOUR COMMUNICATION STYLE:
 - Be practical, specific, and actionable
-- Give exact quantities (kg, grams, ml) when recommending treatments
+- Give exact quantities (kg, grams, ml) when recommending treatments or reporting weights
+- ALWAYS include units (like 'grams', 'kg', 'ppm', 'ft') when displaying numbers (e.g., Average Weight: 120g)
+- When a user asks for their pond status, make sure to show ALL key results (Live fish, average weight, total biomass, water quality, feeding) comprehensively
 - Reference the farmer's actual pond data in your responses
 - Use simple language — farmer may not have advanced education
 - When mentioning products, use Indian brand names available locally
@@ -81,7 +83,7 @@ export class AiService {
         temperature: 0.7,
         topP: 0.8,
         topK: 40,
-        maxOutputTokens: 1024,
+        maxOutputTokens: 4096,
       }
     });
   }

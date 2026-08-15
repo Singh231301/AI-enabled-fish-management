@@ -14,9 +14,10 @@ interface ChatMessage {
 interface ChatInterfaceProps {
   pondId: string | null;
   selectedPondName?: string;
+  externalQuery?: { text: string; timestamp: number } | null;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ pondId, selectedPondName }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ pondId, selectedPondName, externalQuery }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ pondId, selectedPondName 
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  useEffect(() => {
+    if (externalQuery?.text && !isLoading && !isStreaming) {
+      handleSend(externalQuery.text);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalQuery?.timestamp]);
 
   const handleSend = async (messageText?: string) => {
     const text = (messageText || input).trim();

@@ -49,8 +49,8 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
 
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
-        <div className={`px-6 py-4 border-b flex justify-between items-center ${mode === 'complete' ? 'bg-green-50 border-green-100 text-green-800' : 'bg-slate-50 border-slate-200 text-slate-800'}`}>
+      <div className="bg-slate-800 rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+        <div className={`px-6 py-4 border-b flex justify-between items-center ${mode === 'complete' ? 'bg-green-900/30 border-green-800/50 text-green-300' : 'bg-slate-800/50 border-slate-700 text-white'}`}>
           <div className="flex items-center">
             {mode === 'complete' ? <CheckCircle2 className="w-5 h-5 mr-2" /> : <XCircle className="w-5 h-5 mr-2" />}
             <h2 className="text-lg font-bold">
@@ -63,9 +63,9 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
         </div>
 
         <div className="p-6">
-          <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="mb-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
             <p className="text-sm text-slate-500 mb-1">Task</p>
-            <p className="font-semibold text-slate-800">{task.title}</p>
+            <p className="font-semibold text-white">{task.title}</p>
           </div>
 
           <form id="completion-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -73,29 +73,29 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Completion Date</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Completion Date</label>
                     <input
                       type="date"
                       {...register('completedDate', { required: 'Date is required' })}
-                      className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                      className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Actual Time (mins)</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Actual Time (mins)</label>
                     <input
                       type="number"
                       {...register('actualMinutes', { min: 1 })}
-                      className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                      className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-white"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Notes (Optional)</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Notes (Optional)</label>
                   <textarea
                     {...register('completionNote')}
                     rows={3}
                     placeholder="Any findings or observations?"
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none"
+                    className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none text-white"
                   />
                 </div>
               </>
@@ -103,26 +103,26 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
 
             {mode === 'skip' && (
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Reason for Skipping <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Reason for Skipping <span className="text-red-500">*</span></label>
                 <textarea
                   {...register('skipReason', { required: 'Reason is required' })}
                   rows={3}
                   placeholder="Why is this task being skipped?"
-                  className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-500 outline-none resize-none"
+                  className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg focus:ring-2 focus:ring-slate-500 outline-none resize-none text-white"
                 />
                 {errors.skipReason && <p className="text-red-500 text-sm mt-1">{errors.skipReason.message as string}</p>}
               </div>
             )}
 
             {task.isRecurring && task.recurrencePattern && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+              <div className="mt-4 p-3 bg-sky-500/10 border border-blue-100 rounded-lg">
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     {...register('generateNext')}
-                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 mr-2"
+                    className="w-4 h-4 text-sky-400 rounded border-slate-600 focus:ring-sky-500 mr-2"
                   />
-                  <span className="text-sm font-medium text-blue-900">
+                  <span className="text-sm font-medium text-sky-300">
                     Generate next occurrence automatically ({task.recurrencePattern.toLowerCase().replace(/_/g, ' ')})
                   </span>
                 </label>
@@ -131,11 +131,11 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
           </form>
         </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-t flex justify-end gap-3">
+        <div className="px-6 py-4 bg-slate-800/50 border-t flex justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-200 transition-colors"
+            className="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-700 transition-colors"
           >
             Cancel
           </button>
@@ -145,8 +145,8 @@ export const TaskCompletionForm: React.FC<TaskCompletionFormProps> = ({
             disabled={isSubmitting}
             className={`px-5 py-2 rounded-lg font-medium text-white transition-colors disabled:opacity-50 ${
               mode === 'complete' 
-                ? 'bg-green-600 hover:bg-green-700 shadow-sm shadow-green-200' 
-                : 'bg-slate-800 hover:bg-slate-900 shadow-sm shadow-slate-300'
+                ? 'bg-green-600 hover:bg-green-700  shadow-green-200' 
+                : 'bg-slate-700 hover:bg-slate-600  shadow-slate-300'
             }`}
           >
             {isSubmitting ? 'Saving...' : (mode === 'complete' ? 'Complete Task' : 'Skip Task')}

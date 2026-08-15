@@ -11,7 +11,7 @@ interface CashFlowChartProps {
 export const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-72 flex items-center justify-center text-slate-500 bg-slate-50 rounded-lg border border-slate-100">
+      <div className="h-72 flex items-center justify-center text-slate-400 bg-slate-800/50 rounded-lg border border-slate-800">
         No cash flow data available.
       </div>
     );
@@ -31,26 +31,27 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
           data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
           <XAxis 
             dataKey="displayMonth" 
             axisLine={false} 
             tickLine={false} 
-            tick={{ fill: '#64748b', fontSize: 12 }} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
           />
           <YAxis 
             tickFormatter={formatYAxis} 
             axisLine={false} 
             tickLine={false} 
-            tick={{ fill: '#64748b', fontSize: 12 }} 
+            tick={{ fill: '#94a3b8', fontSize: 12 }} 
           />
           <Tooltip
             formatter={(value: number) => `₹${value.toLocaleString()}`}
-            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-            cursor={{ fill: '#f1f5f9' }}
+            contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', border: '1px solid #1e293b', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', color: '#f8fafc' }}
+            itemStyle={{ color: '#e2e8f0' }}
+            cursor={{ fill: '#1e293b' }}
           />
           <Legend wrapperStyle={{ paddingTop: '20px' }} />
-          <ReferenceLine y={0} stroke="#cbd5e1" />
+          <ReferenceLine y={0} stroke="#475569" />
           <Bar dataKey="revenue" name="Income" fill="#34d399" radius={[4, 4, 0, 0]} maxBarSize={40} />
           <Bar dataKey="expenses" name="Expenses" fill="#f87171" radius={[4, 4, 0, 0]} maxBarSize={40} />
         </BarChart>

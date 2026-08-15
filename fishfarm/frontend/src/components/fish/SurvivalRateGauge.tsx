@@ -19,8 +19,8 @@ export const SurvivalRateGauge: React.FC<SurvivalRateGaugeProps> = ({ mortalityS
   else if (clampedRate > 80) colorClass = 'text-yellow-500';
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex flex-col items-center justify-center">
-      <h3 className="text-lg font-bold text-gray-900 mb-6 self-start">Survival Rate</h3>
+    <div className="bg-slate-800 p-6 rounded-lg  border border-slate-700 flex flex-col items-center justify-center">
+      <h3 className="text-lg font-bold text-white mb-6 self-start">Survival Rate</h3>
       
       <div className="relative flex items-center justify-center mb-4">
         <svg className="transform -rotate-90 w-40 h-40">
@@ -47,12 +47,12 @@ export const SurvivalRateGauge: React.FC<SurvivalRateGaugeProps> = ({ mortalityS
           />
         </svg>
         <div className="absolute flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-gray-900">{clampedRate.toFixed(1)}%</span>
+          <span className="text-3xl font-bold text-white">{clampedRate.toFixed(1)}%</span>
         </div>
       </div>
       
-      <div className="text-center text-sm text-gray-500 mt-2">
-        <p>Estimated Alive: <span className="font-semibold text-gray-700">{mortalitySummary.estimatedAlive.toLocaleString()}</span></p>
+      <div className="text-center text-sm text-slate-400 mt-2">
+        <p>Estimated Alive: <span className="font-semibold text-slate-300">{mortalitySummary.estimatedAlive.toLocaleString()}</span></p>
         <p>Total Stocked: {mortalitySummary.totalStocked.toLocaleString()}</p>
       </div>
     </div>

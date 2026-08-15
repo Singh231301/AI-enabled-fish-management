@@ -51,14 +51,14 @@ const GrowthAnalyticsChart: React.FC<Props> = ({ data }) => {
         <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '8px' }}>Current Weight</div>
           <div style={{ color: '#f8fafc', fontSize: '1.8rem', fontWeight: 'bold' }}>
-            {data.currentWeight ? `${data.currentWeight}g` : 'N/A'}
+            {data.currentWeight ? `${data.currentWeight.toFixed(2)}g` : 'N/A'}
           </div>
         </div>
         
         <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '8px' }}>Benchmark Weight</div>
           <div style={{ color: '#f8fafc', fontSize: '1.8rem', fontWeight: 'bold' }}>
-            {data.benchmarkWeight ? `${data.benchmarkWeight}g` : 'N/A'}
+            {data.benchmarkWeight ? `${data.benchmarkWeight.toFixed(2)}g` : 'N/A'}
           </div>
         </div>
         
@@ -103,6 +103,7 @@ const GrowthAnalyticsChart: React.FC<Props> = ({ data }) => {
               <Tooltip 
                 contentStyle={{ background: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f8fafc' }}
                 itemStyle={{ color: '#f8fafc' }}
+                formatter={(value: number) => [`${typeof value === 'number' ? value.toFixed(2) : value}g`, undefined]}
               />
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
               
@@ -161,8 +162,8 @@ const GrowthAnalyticsChart: React.FC<Props> = ({ data }) => {
                   <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                     <td style={{ padding: '12px', color: '#f8fafc' }}>{new Date(s.sampleDate).toLocaleDateString()}</td>
                     <td style={{ padding: '12px', color: '#e2e8f0' }}>{s.fishAgeDays}</td>
-                    <td style={{ padding: '12px', color: '#f8fafc', fontWeight: 600 }}>{s.averageWeightGrams}g</td>
-                    <td style={{ padding: '12px', color: '#94a3b8' }}>{s.benchmarkWeight ? `${s.benchmarkWeight}g` : '-'}</td>
+                    <td style={{ padding: '12px', color: '#f8fafc', fontWeight: 600 }}>{s.averageWeightGrams.toFixed(2)}g</td>
+                    <td style={{ padding: '12px', color: '#94a3b8' }}>{s.benchmarkWeight ? `${s.benchmarkWeight.toFixed(2)}g` : '-'}</td>
                     <td style={{ 
                       padding: '12px', 
                       color: s.variancePercent === null ? '#94a3b8' : (s.variancePercent >= 0 ? '#10b981' : '#ef4444'),

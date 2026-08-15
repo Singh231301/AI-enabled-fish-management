@@ -11,6 +11,7 @@ import { WaterColorTimeline } from '../../components/water/WaterColorTimeline';
 import { WaterQualityLogForm } from '../../components/water/WaterQualityLogForm';
 import { WaterTreatmentForm } from '../../components/water/WaterTreatmentForm';
 import { WaterStatusBadge } from '../../components/water/WaterStatusBadge';
+import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { WATER_COLOR_CONFIG, WATER_SMELL_CONFIG, CHEMICAL_TYPE_CONFIG } from '../../utils/constants';
 import toast from 'react-hot-toast';
 import { Plus, TestTube2, AlertTriangle, CloudRain, Droplets, Info } from 'lucide-react';
@@ -34,6 +35,7 @@ export const WaterPage: React.FC = () => {
   const [isTreatmentModalOpen, setIsTreatmentModalOpen] = useState(false);
   const [selectedLog, setSelectedLog] = useState<WaterQualityLog | undefined>(undefined);
   const [selectedTreatment, setSelectedTreatment] = useState<WaterTreatmentLog | undefined>(undefined);
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean, type: 'log' | 'treatment', id: string }>({ isOpen: false, type: 'log', id: '' });
 
   useEffect(() => {
     fetchPonds();
@@ -91,29 +93,35 @@ export const WaterPage: React.FC = () => {
     fetchWaterData(selectedPondId, period);
   };
 
-  const deleteLog = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this water reading?")) return;
-    try {
-      const res = await waterApi.deleteWaterQualityLog(id, selectedPondId);
-      if (res.success) {
-        toast.success("Log deleted");
-        fetchWaterData(selectedPondId, period);
-      }
-    } catch (error) {
-      toast.error("Failed to delete log");
-    }
+  const deleteLog = (id: string) => {
+    setDeleteDialog({ isOpen: true, type: 'log', id });
   };
 
-  const deleteTreatment = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this treatment record?")) return;
+  const deleteTreatment = (id: string) => {
+    setDeleteDialog({ isOpen: true, type: 'treatment', id });
+  };
+
+  const executeDelete = async () => {
+    const { type, id } = deleteDialog;
+    if (!id) return;
     try {
-      const res = await waterApi.deleteWaterTreatment(id, selectedPondId);
-      if (res.success) {
-        toast.success("Treatment deleted");
-        fetchWaterData(selectedPondId, period);
+      if (type === 'log') {
+        const res = await waterApi.deleteWaterQualityLog(id, selectedPondId);
+        if (res.success) {
+          toast.success("Log deleted");
+          fetchWaterData(selectedPondId, period);
+        }
+      } else {
+        const res = await waterApi.deleteWaterTreatment(id, selectedPondId);
+        if (res.success) {
+          toast.success("Treatment deleted");
+          fetchWaterData(selectedPondId, period);
+        }
       }
     } catch (error) {
-      toast.error("Failed to delete treatment");
+      toast.error(`Failed to delete ${type}`);
+    } finally {
+      setDeleteDialog({ isOpen: false, type: 'log', id: '' });
     }
   };
 
@@ -437,6 +445,15 @@ export const WaterPage: React.FC = () => {
           onCancel={() => setIsTreatmentModalOpen(false)}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title={deleteDialog.type === 'log' ? "Delete Water Reading" : "Delete Treatment Record"}
+        message={`Are you sure you want to delete this ${deleteDialog.type === 'log' ? 'water reading' : 'treatment record'}? This action cannot be undone.`}
+        confirmText="Delete Record"
+        onConfirm={executeDelete}
+        onCancel={() => setDeleteDialog({ isOpen: false, type: 'log', id: '' })}
+      />
 
     </div>
   );

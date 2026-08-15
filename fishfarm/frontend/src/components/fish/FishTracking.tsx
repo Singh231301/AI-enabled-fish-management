@@ -3,6 +3,7 @@ import { fishApi } from '../../api/endpoints/fish.api';
 import { FishOverview, FishStocking, MortalityLog, FishGrowthSample } from '../../types/fish.types';
 import { toast } from 'react-hot-toast';
 import { Plus } from 'lucide-react';
+import { ConfirmDialog } from '../common/ConfirmDialog';
 
 import { StockingForm } from './StockingForm';
 import { MortalityLogForm } from './MortalityLogForm';
@@ -38,6 +39,9 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
   // Additional data for sub-tabs
   const [mortalityLogs, setMortalityLogs] = useState<MortalityLog[]>([]);
   const [isLoadingMortality, setIsLoadingMortality] = useState(false);
+
+  // Delete dialog state
+  const [deleteDialog, setDeleteDialog] = useState<{isOpen: boolean, type: 'stocking'|'mortality', id: string}>({ isOpen: false, type: 'stocking', id: '' });
 
   useEffect(() => {
     if (pondId) {
@@ -79,26 +83,30 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
     }
   };
 
-  const handleDeleteStocking = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this stocking record?")) return;
-    try {
-      await fishApi.deleteStocking(id, pondId);
-      toast.success("Record deleted");
-      loadOverview();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to delete");
-    }
+  const handleDeleteStocking = (id: string) => {
+    setDeleteDialog({ isOpen: true, type: 'stocking', id });
   };
 
-  const handleDeleteMortality = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this mortality log?")) return;
+  const handleDeleteMortality = (id: string) => {
+    setDeleteDialog({ isOpen: true, type: 'mortality', id });
+  };
+
+  const executeDelete = async () => {
+    const { type, id } = deleteDialog;
+    if (!id) return;
     try {
-      await fishApi.deleteMortality(id, pondId);
+      if (type === 'stocking') {
+        await fishApi.deleteStocking(id, pondId);
+      } else {
+        await fishApi.deleteMortality(id, pondId);
+      }
       toast.success("Record deleted");
       loadOverview();
-      if (activeTab === 'mortality') loadMortalityLogs();
+      if (type === 'mortality' && activeTab === 'mortality') loadMortalityLogs();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to delete");
+    } finally {
+      setDeleteDialog({ isOpen: false, type: 'stocking', id: '' });
     }
   };
 
@@ -135,17 +143,17 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
   const noFish = overview.stockings.length === 0;
 
   return (
-    <div className="bg-slate-100 rounded-xl p-4 sm:p-6 text-gray-900 border border-slate-300">
+    <div className="bg-slate-800 rounded-xl p-4 sm:p-6 text-white border border-slate-700">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div className="flex space-x-2 border-b border-gray-300 w-full sm:w-auto">
+        <div className="flex space-x-2 border-b border-slate-600 w-full sm:w-auto">
           {['summary', 'stocking', 'mortality', 'growth'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
               className={`pb-2 px-4 font-medium text-sm transition-colors ${
                 activeTab === tab
-                  ? 'border-b-2 border-blue-600 text-blue-600'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'border-b-2 border-sky-500 text-sky-400'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -157,7 +165,7 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
           {activeTab === 'stocking' && (
             <button
               onClick={() => setShowStockingForm(true)}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+              className="flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 text-sm font-medium"
             >
               <Plus className="w-4 h-4 mr-1" /> Add Stocking
             </button>
@@ -182,10 +190,10 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
       </div>
 
       {noFish && activeTab !== 'stocking' ? (
-        <div className="bg-white rounded-xl p-8 border border-gray-200 text-center flex flex-col items-center justify-center">
+        <div className="bg-slate-800 rounded-xl p-8 border border-slate-700 text-center flex flex-col items-center justify-center">
           <span className="text-5xl mb-4">🐟</span>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No Fish Stocked Yet</h3>
-          <p className="text-gray-500 mb-6 max-w-md">
+          <h3 className="text-xl font-bold text-white mb-2">No Fish Stocked Yet</h3>
+          <p className="text-slate-400 mb-6 max-w-md">
             Before you can track mortality or growth, you need to record your initial fish stocking.
           </p>
           <button
@@ -193,7 +201,7 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
               setActiveTab('stocking');
               setShowStockingForm(true);
             }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 font-medium"
           >
             Record First Stocking
           </button>
@@ -220,8 +228,8 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
           {activeTab === 'stocking' && (
             <div className="space-y-4">
               {overview.stockings.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                  <p className="text-gray-500">No stocking records found.</p>
+                <div className="text-center py-12 bg-slate-800 rounded-lg border border-slate-700">
+                  <p className="text-slate-400">No stocking records found.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -239,14 +247,14 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
           )}
 
           {activeTab === 'mortality' && (
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="bg-slate-800 rounded-lg p-6  border border-slate-700">
               <div className="mb-6 flex justify-between items-end">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">Mortality History</h3>
-                  <p className="text-sm text-gray-500">Log and track daily fish deaths</p>
+                  <h3 className="text-lg font-bold text-white">Mortality History</h3>
+                  <p className="text-sm text-slate-400">Log and track daily fish deaths</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Total Mortality</p>
+                  <p className="text-sm text-slate-400">Total Mortality</p>
                   <p className="text-xl font-bold text-red-600">{overview.mortalitySummary.totalMortality}</p>
                 </div>
               </div>
@@ -301,6 +309,15 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
           onCancel={() => { setShowGrowthForm(false); setEditGrowth(undefined); }}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title={deleteDialog.type === 'stocking' ? "Delete Stocking Record" : "Delete Mortality Log"}
+        message={`Are you sure you want to delete this ${deleteDialog.type} record? This action cannot be undone.`}
+        confirmText="Delete Record"
+        onConfirm={executeDelete}
+        onCancel={() => setDeleteDialog({ isOpen: false, type: 'stocking', id: '' })}
+      />
 
     </div>
   );

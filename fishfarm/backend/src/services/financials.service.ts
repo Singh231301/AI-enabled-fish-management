@@ -214,8 +214,10 @@ export class FinancialService {
 
     const invoiceNumber = await this.generateInvoiceNumber(dto.pondId);
 
+    const { pondId, ...restDto } = dto;
+
     const sale = await this.saleRepo.create({
-      ...dto,
+      ...restDto,
       balancePending,
       paymentStatus,
       invoiceNumber,
@@ -318,8 +320,10 @@ export class FinancialService {
     const pond = await this.pondRepo.findByIdAndUserId(dto.pondId, userId);
     if (!pond) throw new AppError('Pond not found', 404);
 
+    const { pondId, ...restDto } = dto;
+
     return this.marketPriceRepo.create({
-      ...dto,
+      ...restDto,
       priceDate: new Date(dto.priceDate),
       pond: { connect: { id: dto.pondId } },
       user: { connect: { id: userId } }

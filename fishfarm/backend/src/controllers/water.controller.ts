@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { WaterService } from '../services/water.service';
 import { InventoryService } from '../services/inventory.service';
-import { sendSuccess } from '../utils/response.utils';
+import { sendSuccess, sendPaginated } from '../utils/response.utils';
 import {
   createWaterQualityLogSchema,
   updateWaterQualityLogSchema,
@@ -41,16 +41,7 @@ export class WaterController {
   public getWaterQualityLogs = async (req: Request, res: Response) => {
     const query = waterQualityListQuerySchema.parse(req.query);
     const data = await this.waterService.getWaterQualityLogs(query.pondId, req.user!.id, query);
-    return res.status(200).json({
-      success: true,
-      data: data.records,
-      meta: {
-        total: data.total,
-        page: query.page,
-        limit: query.limit,
-        totalPages: Math.ceil(data.total / query.limit),
-      }
-    });
+    return sendPaginated(res, data.records, data.total, query.page, query.limit, "Logs retrieved");
   };
 
   public getWaterQualityLogById = async (req: Request, res: Response) => {
@@ -115,16 +106,7 @@ export class WaterController {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const data = await this.waterService.getTreatmentLogs(pondId, req.user!.id, { page, limit });
-    return res.status(200).json({
-      success: true,
-      data: data.records,
-      meta: {
-        total: data.total,
-        page,
-        limit,
-        totalPages: Math.ceil(data.total / limit),
-      }
-    });
+    return sendPaginated(res, data.records, data.total, page, limit, "Treatment logs retrieved");
   };
 
   public updateWaterTreatment = async (req: Request, res: Response) => {

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Plus, Trash2, Mail } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface Invitation {
   id: string;
@@ -31,7 +33,7 @@ export const UserManagementTab: React.FC = () => {
     
     setInvitations([...invitations, newInv]);
     setEmail('');
-    alert(`Invitation sent to ${email}`);
+    toast.success(`Invitation sent to ${email}`);
   };
 
   const handleRevoke = (id: string) => {
@@ -59,19 +61,19 @@ export const UserManagementTab: React.FC = () => {
           <div className="flex flex-col gap-2 w-full lg:flex-1 lg:min-w-[200px]">
             <label className="text-sm font-semibold text-slate-300">Role</label>
             <select className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="VIEWER">VIEWER (Read Only)</option>
-              <option value="HELPER">HELPER (Logs Tasks)</option>
-              <option value="ADMIN">ADMIN (Full Access)</option>
+              <option className="bg-slate-800" value="VIEWER">VIEWER (Read Only)</option>
+              <option className="bg-slate-800" value="HELPER">HELPER (Logs Tasks)</option>
+              <option className="bg-slate-800" value="ADMIN">ADMIN (Full Access)</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2 w-full lg:flex-1 lg:min-w-[200px]">
             <label className="text-sm font-semibold text-slate-300">Assigned Pond (Optional)</label>
             <select className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={pond} onChange={(e) => setPond(e.target.value)}>
-              <option value="All Ponds">All Ponds</option>
-              <option value="Pond A">Pond A</option>
-              <option value="Pond B">Pond B</option>
-              <option value="Nursery">Nursery</option>
+              <option className="bg-slate-800" value="All Ponds">All Ponds</option>
+              <option className="bg-slate-800" value="Pond A">Pond A</option>
+              <option className="bg-slate-800" value="Pond B">Pond B</option>
+              <option className="bg-slate-800" value="Nursery">Nursery</option>
             </select>
           </div>
 

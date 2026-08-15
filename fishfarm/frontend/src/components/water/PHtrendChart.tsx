@@ -122,7 +122,8 @@ export const PHtrendChart: React.FC<PHtrendChartProps> = ({
             />
             <Tooltip content={<CustomTooltip />} />
             
-            <ReferenceArea y1={5.5} y2={7.0} fill="#ef4444" fillOpacity={0.08} />
+            <ReferenceArea y1={5.5} y2={6.0} fill="#ef4444" fillOpacity={0.08} />
+            <ReferenceArea y1={6.0} y2={7.0} fill="#f59e0b" fillOpacity={0.08} />
             <ReferenceArea y1={7.0} y2={8.5} fill="#22c55e" fillOpacity={0.10} />
             <ReferenceArea y1={8.5} y2={9.0} fill="#f59e0b" fillOpacity={0.08} />
             <ReferenceArea y1={9.0} y2={10} fill="#ef4444" fillOpacity={0.08} />

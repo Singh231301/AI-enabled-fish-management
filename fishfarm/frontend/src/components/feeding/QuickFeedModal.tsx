@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { FeedRecommendation, FishResponseType, FeedType } from '../../types/feeding.types';
 import { FISH_RESPONSE_CONFIG, FEED_TYPE_CONFIG } from '../../utils/constants';
+import { Modal } from '../common/Modal';
 
 interface QuickFeedModalProps {
   isOpen: boolean;
@@ -58,17 +59,18 @@ export const QuickFeedModal: React.FC<QuickFeedModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-slate-900 rounded-xl w-full max-w-sm border border-slate-700 shadow-2xl">
-        <div className="flex justify-between items-center p-4 border-b border-slate-800">
-          <div>
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">⚡ Quick Feed Log</h2>
-            <p className="text-xs text-slate-400">Fast entry — add details later if needed</p>
-          </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
-            <X size={20} />
-          </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={
+        <div>
+          <span className="flex items-center gap-2">⚡ Quick Feed Log</span>
+          <p className="text-xs text-slate-400 font-normal mt-1">Fast entry — add details later if needed</p>
         </div>
+      }
+      size="sm"
+    >
+      <div className="-m-2">
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
@@ -179,6 +181,6 @@ export const QuickFeedModal: React.FC<QuickFeedModalProps> = ({
           )}
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };

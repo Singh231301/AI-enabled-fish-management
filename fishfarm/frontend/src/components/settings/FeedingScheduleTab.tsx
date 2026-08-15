@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Clock, Plus, Trash2, Edit2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export const FeedingScheduleTab: React.FC = () => {
   const [defaultFeedType, setDefaultFeedType] = useState('Floating Pellets (Standard)');
@@ -20,10 +22,10 @@ export const FeedingScheduleTab: React.FC = () => {
             value={defaultFeedType} 
             onChange={(e) => setDefaultFeedType(e.target.value)}
           >
-            <option value="Floating Pellets (Standard)">Floating Pellets (Standard)</option>
-            <option value="Sinking Pellets">Sinking Pellets</option>
-            <option value="Starter Crumbles">Starter Crumbles</option>
-            <option value="Medicinal Feed">Medicinal Feed</option>
+            <option className="bg-slate-800" value="Floating Pellets (Standard)">Floating Pellets (Standard)</option>
+            <option className="bg-slate-800" value="Sinking Pellets">Sinking Pellets</option>
+            <option className="bg-slate-800" value="Starter Crumbles">Starter Crumbles</option>
+            <option className="bg-slate-800" value="Medicinal Feed">Medicinal Feed</option>
           </select>
         </div>
 
@@ -41,7 +43,7 @@ export const FeedingScheduleTab: React.FC = () => {
 
         <button 
           className="bg-gradient-to-r from-blue-400 to-purple-400 text-white px-6 py-3 rounded-lg font-bold hover:opacity-90 transition inline-block w-full md:w-auto" 
-          onClick={() => alert('Saved global feeding settings.')}
+          onClick={() => toast.success('Saved global feeding settings.')}
         >
           Save Settings
         </button>

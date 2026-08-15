@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, Edit2, Plus, Trash2, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { ConfirmDialog } from '../common/ConfirmDialog';
 
 interface InfrastructureChecklistProps {
   pondId: string;
@@ -37,6 +38,7 @@ export const InfrastructureChecklist: React.FC<InfrastructureChecklistProps> = (
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState<{isOpen: boolean, id: string, name: string}>({ isOpen: false, id: '', name: '' });
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
@@ -106,9 +108,14 @@ export const InfrastructureChecklist: React.FC<InfrastructureChecklistProps> = (
     setEditingItemId(item.id);
   };
 
-  const handleDelete = async (itemId: string, itemName: string) => {
-    if (window.confirm(`Are you sure you want to delete '${itemName}'?`)) {
-      await onItemDelete(itemId);
+  const handleDelete = (itemId: string, itemName: string) => {
+    setDeleteDialog({ isOpen: true, id: itemId, name: itemName });
+  };
+
+  const executeDelete = async () => {
+    if (deleteDialog.id) {
+      await onItemDelete(deleteDialog.id);
+      setDeleteDialog({ isOpen: false, id: '', name: '' });
     }
   };
 
@@ -415,6 +422,15 @@ export const InfrastructureChecklist: React.FC<InfrastructureChecklistProps> = (
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title="Delete Infrastructure Item"
+        message={`Are you sure you want to delete '${deleteDialog.name}'? This action cannot be undone.`}
+        confirmText="Delete Item"
+        onConfirm={executeDelete}
+        onCancel={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
+      />
     </div>
   );
 };

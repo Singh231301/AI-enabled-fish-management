@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export const AppPreferencesTab: React.FC = () => {
   const [preferences, setPreferences] = useState({
     language: 'en',
     dateFormat: 'MM/DD/YYYY',
     weightUnit: 'kg',
-    currency: 'USD',
+    currency: 'INR',
     theme: 'dark',
     dashboardRefreshMinutes: 5,
     showWeatherWidget: true,
@@ -24,9 +25,9 @@ export const AppPreferencesTab: React.FC = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      alert('App preferences saved.');
+      toast.success('App preferences saved.');
     } catch (error) {
-      alert('Failed to save app preferences.');
+      toast.error('Failed to save app preferences.');
     } finally {
       setLoading(false);
     }
@@ -41,44 +42,45 @@ export const AppPreferencesTab: React.FC = () => {
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-slate-300">Language</label>
             <select name="language" className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={preferences.language} onChange={handleChange}>
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
+              <option className="bg-slate-800" value="en">English</option>
+              <option className="bg-slate-800" value="es">Spanish</option>
+              <option className="bg-slate-800" value="fr">French</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-slate-300">Date Format</label>
             <select name="dateFormat" className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={preferences.dateFormat} onChange={handleChange}>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              <option className="bg-slate-800" value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option className="bg-slate-800" value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option className="bg-slate-800" value="YYYY-MM-DD">YYYY-MM-DD</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-slate-300">Weight Unit</label>
             <select name="weightUnit" className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={preferences.weightUnit} onChange={handleChange}>
-              <option value="kg">Kilograms (kg)</option>
-              <option value="lbs">Pounds (lbs)</option>
+              <option className="bg-slate-800" value="kg">Kilograms (kg)</option>
+              <option className="bg-slate-800" value="lbs">Pounds (lbs)</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-slate-300">Currency</label>
             <select name="currency" className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={preferences.currency} onChange={handleChange}>
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
+              <option className="bg-slate-800" value="INR">INR (₹)</option>
+              <option className="bg-slate-800" value="USD">USD ($)</option>
+              <option className="bg-slate-800" value="EUR">EUR (€)</option>
+              <option className="bg-slate-800" value="GBP">GBP (£)</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-slate-300">Theme</label>
             <select name="theme" className="bg-white/5 border border-white/10 text-white p-3 rounded-lg outline-none text-sm w-full focus:border-blue-500 transition-colors" value={preferences.theme} onChange={handleChange}>
-              <option value="dark">Dark Theme</option>
-              <option value="light">Light Theme</option>
-              <option value="system">System Default</option>
+              <option className="bg-slate-800" value="dark">Dark Theme</option>
+              <option className="bg-slate-800" value="light">Light Theme</option>
+              <option className="bg-slate-800" value="system">System Default</option>
             </select>
           </div>
 

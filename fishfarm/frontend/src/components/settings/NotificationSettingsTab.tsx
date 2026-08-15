@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 type NotificationType = 'taskDue' | 'aiAlert' | 'lowStock' | 'systemUpdate';
 type Priority = 'low' | 'medium' | 'high';
@@ -48,9 +49,9 @@ export const NotificationSettingsTab: React.FC = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      alert('Notification preferences saved.');
+      toast.success('Notification preferences saved.');
     } catch (error) {
-      alert('Failed to save preferences.');
+      toast.error('Failed to save preferences.');
     } finally {
       setLoading(false);
     }
@@ -87,9 +88,9 @@ export const NotificationSettingsTab: React.FC = () => {
                     value={settings[type].priority}
                     onChange={(e) => handlePriorityChange(type, e.target.value as Priority)}
                   >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option className="bg-slate-800" value="low">Low</option>
+                    <option className="bg-slate-800" value="medium">Medium</option>
+                    <option className="bg-slate-800" value="high">High</option>
                   </select>
                 </div>
 

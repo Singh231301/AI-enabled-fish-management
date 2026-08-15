@@ -23,7 +23,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <div className="relative border-l-2 border-slate-200 ml-4 md:ml-6 space-y-12">
+      <div className="relative border-l-2 border-slate-700 ml-4 md:ml-6 space-y-12">
         
         {Object.entries(groupedTasks).map(([dateStr, dateTasks]) => {
           const date = new Date(dateStr);
@@ -38,7 +38,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
               
               <div className="pl-8">
                 <h3 className={`text-sm font-bold mb-4 uppercase tracking-wider ${
-                  today ? 'text-blue-600' : past ? 'text-red-500' : 'text-slate-500'
+                  today ? 'text-sky-400' : past ? 'text-red-500' : 'text-slate-400'
                 }`}>
                   {today ? 'Today' : format(date, 'EEEE, MMM d')}
                 </h3>
@@ -52,7 +52,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
                       <div 
                         key={task.id}
                         onClick={() => onTaskClick(task)}
-                        className={`bg-white rounded-xl shadow-sm border p-4 cursor-pointer hover:shadow-md transition-all ${
+                        className={`bg-slate-800 rounded-xl  border p-4 cursor-pointer hover:shadow-md transition-all ${
                           task.status === 'COMPLETED' ? 'opacity-60' : ''
                         }`}
                       >
@@ -63,17 +63,17 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
                                 {priorityConfig.label}
                               </span>
                               {task.status === 'COMPLETED' && (
-                                <span className="flex items-center text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                <span className="flex items-center text-xs font-semibold text-green-600 bg-green-500/20 px-2 py-0.5 rounded">
                                   <CheckCircle2 className="w-3 h-3 mr-1" /> Done
                                 </span>
                               )}
                             </div>
-                            <h4 className={`font-bold text-slate-800 ${task.status === 'COMPLETED' ? 'line-through' : ''}`}>
+                            <h4 className={`font-bold text-white ${task.status === 'COMPLETED' ? 'line-through' : ''}`}>
                               {task.title}
                             </h4>
                           </div>
                           {task.estimatedMinutes && (
-                            <div className="flex items-center text-sm font-medium text-slate-500 bg-slate-50 px-2 py-1 rounded-lg">
+                            <div className="flex items-center text-sm font-medium text-slate-400 bg-slate-800/50 px-2 py-1 rounded-lg">
                               <Clock className="w-4 h-4 mr-1" />
                               {task.estimatedMinutes}m
                             </div>
@@ -81,12 +81,12 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
                         </div>
                         
                         {(task.isRecurring || task.category) && (
-                          <div className="flex items-center gap-3 mt-3 text-xs font-medium text-slate-500">
+                          <div className="flex items-center gap-3 mt-3 text-xs font-medium text-slate-400">
                             <span className="flex items-center">
                               {categoryConfig.label}
                             </span>
                             {task.isRecurring && (
-                              <span className="flex items-center text-blue-600">
+                              <span className="flex items-center text-sky-400">
                                 <RotateCw className="w-3 h-3 mr-1" />
                                 {task.recurrencePattern}
                               </span>
@@ -103,7 +103,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({ tasks, onTas
         })}
 
         {Object.keys(groupedTasks).length === 0 && (
-          <div className="pl-8 text-slate-500 font-medium">
+          <div className="pl-8 text-slate-400 font-medium">
             No tasks found for the selected filters.
           </div>
         )}

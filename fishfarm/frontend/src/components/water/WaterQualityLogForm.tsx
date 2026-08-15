@@ -7,6 +7,7 @@ import { WATER_COLOR_CONFIG, WATER_SMELL_CONFIG, PH_STATUS_CONFIG } from '../../
 import { waterApi } from '../../api/endpoints/water.api';
 import toast from 'react-hot-toast';
 import { X } from 'lucide-react';
+import { Modal } from '../common/Modal';
 
 const waterLogSchema = z.object({
   logDate: z.string().min(1, "Date required"),
@@ -162,19 +163,14 @@ export const WaterQualityLogForm: React.FC<WaterQualityLogFormProps> = ({
   const borderColor = phStatusObj ? phStatusObj.borderColor : 'border-slate-700 focus:border-sky-500';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl border border-slate-700 overflow-hidden my-8">
-        <div className="flex justify-between items-center p-6 border-b border-slate-800">
-          <h2 className="text-xl font-bold text-white">
-            {existingLog ? "✏️ Edit Water Quality Reading" : "💧 Log Water Quality"}
-          </h2>
-          <button onClick={onCancel} className="text-slate-400 hover:text-white transition-colors">
-            <X size={24} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-          <div className="space-y-6">
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      title={existingLog ? "✏️ Edit Water Quality Reading" : "💧 Log Water Quality"}
+      size="lg"
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-2">
+        <div className="space-y-6">
             
             {/* SECTION 1: Date & Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -395,8 +391,7 @@ export const WaterQualityLogForm: React.FC<WaterQualityLogFormProps> = ({
               )}
             </button>
           </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 };

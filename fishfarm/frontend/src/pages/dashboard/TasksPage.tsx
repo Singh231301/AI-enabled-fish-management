@@ -108,12 +108,12 @@ export const TasksPage: React.FC = () => {
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Tasks</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Tasks</h1>
           <p className="text-slate-500 mt-1">Manage your daily pond operations and routines</p>
         </div>
         <button
           onClick={() => { setEditingTask(null); setIsTaskFormOpen(true); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center transition-colors shadow-sm shadow-blue-200"
+          className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-xl font-medium flex items-center justify-center transition-colors  shadow-blue-200"
         >
           <Plus className="w-5 h-5 mr-2" />
           New Task
@@ -136,12 +136,12 @@ export const TasksPage: React.FC = () => {
         />
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="flex border-b border-slate-200 overflow-x-auto">
+      <div className="bg-slate-800 rounded-xl  border border-slate-700 overflow-hidden">
+        <div className="flex border-b border-slate-700 overflow-x-auto">
           <button
             onClick={() => setActiveTab('KANBAN')}
             className={`px-6 py-4 text-sm font-medium flex items-center transition-colors ${
-              activeTab === 'KANBAN' ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50/50' : 'text-slate-600 hover:bg-slate-50'
+              activeTab === 'KANBAN' ? 'border-b-2 border-sky-500 text-sky-400 bg-sky-500/10' : 'text-slate-400 hover:bg-slate-800/50'
             }`}
           >
             <ListTodo className="w-4 h-4 mr-2" />
@@ -150,7 +150,7 @@ export const TasksPage: React.FC = () => {
           <button
             onClick={() => setActiveTab('CALENDAR')}
             className={`px-6 py-4 text-sm font-medium flex items-center transition-colors ${
-              activeTab === 'CALENDAR' ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50/50' : 'text-slate-600 hover:bg-slate-50'
+              activeTab === 'CALENDAR' ? 'border-b-2 border-sky-500 text-sky-400 bg-sky-500/10' : 'text-slate-400 hover:bg-slate-800/50'
             }`}
           >
             <Calendar className="w-4 h-4 mr-2" />
@@ -159,7 +159,7 @@ export const TasksPage: React.FC = () => {
           <button
             onClick={() => setActiveTab('TIMELINE')}
             className={`px-6 py-4 text-sm font-medium flex items-center transition-colors ${
-              activeTab === 'TIMELINE' ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50/50' : 'text-slate-600 hover:bg-slate-50'
+              activeTab === 'TIMELINE' ? 'border-b-2 border-sky-500 text-sky-400 bg-sky-500/10' : 'text-slate-400 hover:bg-slate-800/50'
             }`}
           >
             <LayoutTemplate className="w-4 h-4 mr-2" />
@@ -167,7 +167,7 @@ export const TasksPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="p-6 bg-slate-50 min-h-[500px]">
+        <div className="p-6 bg-slate-800/50 min-h-[500px]">
           {isLoading ? (
             <div className="flex justify-center items-center h-64 text-slate-400">Loading tasks...</div>
           ) : (

@@ -107,7 +107,6 @@ export class InventoryService {
     }
 
     await this.activityRepo.create({
-      userId,
       action: 'CREATE',
       module: 'INVENTORY',
       recordId: item.id,
@@ -224,21 +223,18 @@ export class InventoryService {
       user: { connect: { id: userId } }
     });
 
-    await Promise.all([
-      this.inventoryRepo.updateQuantity(dto.inventoryId, newQuantity, new Date(dto.purchaseDate)),
-      this.inventoryRepo.update(dto.inventoryId, {
-        lastRestockedDate: new Date(dto.purchaseDate),
-        ...(dto.supplier ? { supplier: dto.supplier } : {}),
-        ...(dto.unitCost ? { unitCost: dto.unitCost } : {})
-      }),
-      this.inventoryRepo.incrementStats(dto.inventoryId, 'totalPurchasedKg', dto.quantity)
-    ]);
+    await this.inventoryRepo.update(dto.inventoryId, {
+      currentQuantity: newQuantity,
+      lastTransactionDate: new Date(dto.purchaseDate),
+      lastRestockedDate: new Date(dto.purchaseDate),
+      ...(dto.supplier ? { supplier: dto.supplier } : {}),
+      ...(dto.unitCost ? { unitCost: dto.unitCost } : {}),
+      totalPurchasedKg: { increment: dto.quantity }
+    } as any);
 
     if (dto.createExpenseRecord && totalCost && totalCost > 0) {
       const category = item.category === 'FEED' ? 'FEED' : item.category === 'CHEMICAL' ? 'CHEMICALS_LIME' : 'EQUIPMENT';
       await this.expenseRepo.create({
-        pondId: dto.pondId,
-        userId,
         expenseDate: new Date(dto.purchaseDate),
         category: category as any,
         itemName: `${item.itemName} purchase`,
@@ -285,10 +281,11 @@ export class InventoryService {
       user: { connect: { id: userId } }
     });
 
-    await Promise.all([
-      this.inventoryRepo.updateQuantity(dto.inventoryId, newQuantity, new Date(dto.usageDate)),
-      this.inventoryRepo.incrementStats(dto.inventoryId, 'totalUsedKg', dto.quantity)
-    ]);
+    await this.inventoryRepo.update(dto.inventoryId, {
+      currentQuantity: newQuantity,
+      lastTransactionDate: new Date(dto.usageDate),
+      totalUsedKg: { increment: dto.quantity }
+    } as any);
 
     if (newQuantity <= item.reorderThreshold) {
       const alertPriority = newQuantity === 0 ? 'HIGH' : 'MEDIUM';
@@ -523,8 +520,6 @@ export class InventoryService {
       const item = await this.inventoryRepo.findById(completed.inventoryId);
       if (item) {
         await this.expenseRepo.create({
-          pondId: item.pondId,
-          userId,
           expenseDate: new Date(dto.completedDate),
           category: 'EQUIPMENT',
           itemName: `Maintenance: ${item.itemName} - ${completed.maintenanceType}`,

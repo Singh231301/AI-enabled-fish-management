@@ -73,6 +73,8 @@ const FeedingAnalyticsReport: React.FC<Props> = ({ data }) => {
                 <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8' }} />
                 <Tooltip 
                   contentStyle={{ background: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f8fafc' }}
+                  itemStyle={{ color: '#f8fafc' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                 />
                 <Legend />
                 <Bar dataKey="totalGrams" name="Total Feed (g)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
@@ -95,8 +97,19 @@ const FeedingAnalyticsReport: React.FC<Props> = ({ data }) => {
                   paddingAngle={5}
                   dataKey="count"
                   nameKey="response"
-                  label={({ response, percentage }) => `${response} (${Math.round(percentage)}%)`}
-                  labelLine={false}
+                  label={(props: any) => {
+                    const { cx, cy, midAngle, outerRadius, response, percentage } = props;
+                    const RADIAN = Math.PI / 180;
+                    const radius = outerRadius + 25;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    return (
+                      <text x={x} y={y} fill="#f8fafc" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={12}>
+                        {`${response} (${Math.round(percentage)}%)`}
+                      </text>
+                    );
+                  }}
+                  labelLine={{ stroke: 'rgba(255,255,255,0.2)' }}
                 >
                   {data.responseBreakdown.map((entry, index) => {
                     let color = COLORS[index % COLORS.length];
@@ -108,7 +121,8 @@ const FeedingAnalyticsReport: React.FC<Props> = ({ data }) => {
                   })}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ background: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                  contentStyle={{ background: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f8fafc' }}
+                  itemStyle={{ color: '#f8fafc' }}
                 />
               </PieChart>
             </ResponsiveContainer>

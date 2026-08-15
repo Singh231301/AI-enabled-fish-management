@@ -18,6 +18,7 @@ import { FeedingSummaryCards } from '../../components/feeding/FeedingSummaryCard
 import { FeedingTrendChart } from '../../components/feeding/FeedingTrendChart';
 import { FeedingCalendar } from '../../components/feeding/FeedingCalendar';
 import { FeedResponseChart } from '../../components/feeding/FeedResponseChart';
+import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { FeedingScheduleCard } from '../../components/feeding/FeedingScheduleCard';
 import { FeedInventoryPanel } from '../../components/feeding/FeedInventoryPanel';
 import { FCRDashboard } from '../../components/feeding/FCRDashboard';
@@ -47,6 +48,7 @@ export const FeedingPage: React.FC = () => {
   const [isQuickFeedOpen, setIsQuickFeedOpen] = useState(false);
   const [isFullFormOpen, setIsFullFormOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<FeedingLog | undefined>(undefined);
+  const [deleteLogId, setDeleteLogId] = useState<string | null>(null);
   
   const loadData = useCallback(async (showRefresh = false) => {
     if (!pondId) return;
@@ -110,16 +112,20 @@ export const FeedingPage: React.FC = () => {
     }
   };
 
-  const handleDeleteLog = async (id: string) => {
-    if (!pondId) return;
-    if (window.confirm('Are you sure you want to delete this log?')) {
-      try {
-        await feedingApi.deleteFeedingLog(id, pondId);
-        toast.success("Log deleted");
-        loadData(true);
-      } catch (e) {
-        toast.error("Failed to delete");
-      }
+  const handleDeleteLog = (id: string) => {
+    setDeleteLogId(id);
+  };
+
+  const executeDeleteLog = async () => {
+    if (!deleteLogId) return;
+    try {
+      await feedingApi.deleteFeedingLog(deleteLogId, pondId);
+      toast.success("Log deleted successfully");
+      loadData(true);
+    } catch (e) {
+      toast.error("Failed to delete log");
+    } finally {
+      setDeleteLogId(null);
     }
   };
 
@@ -229,38 +235,18 @@ export const FeedingPage: React.FC = () => {
 
           <FeedingSummaryCards stats={overview?.stats!} isLoading={isLoading} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <FeedingTrendChart 
-                dailyTrend={overview?.stats.dailyTrend || []}
-                weeklyTrend={overview?.stats.weeklyTrend || []}
-                averageDailyGrams={overview?.stats.averageDailyGrams || 0}
-                recommendation={overview?.stats.recommendation || null}
-                isLoading={isLoading}
-                period={period}
-                onPeriodChange={handlePeriodChange}
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FeedResponseChart 
-                  responseBreakdown={overview?.stats.responseBreakdown || []}
-                  dailyTrend={overview?.stats.dailyTrend || []}
-                  isLoading={isLoading}
-                />
-                <FeedingCalendar 
-                  dailyTrend={overview?.stats.dailyTrend || []}
-                  currentMonth={new Date()}
-                  onDayClick={(date) => {
-                    // Pre-fill date and open form
-                    // This is a nice-to-have, maybe just switch to logs tab and filter by date
-                    setActiveTab('logs');
-                  }}
-                  isLoading={isLoading}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-6">
+          <div className="space-y-6">
+            <FeedingTrendChart 
+              dailyTrend={overview?.stats.dailyTrend || []}
+              weeklyTrend={overview?.stats.weeklyTrend || []}
+              averageDailyGrams={overview?.stats.averageDailyGrams || 0}
+              recommendation={overview?.stats.recommendation || null}
+              isLoading={isLoading}
+              period={period}
+              onPeriodChange={handlePeriodChange}
+            />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FCRDashboard 
                 fcr={overview?.stats.fcr || null}
                 fcrInterpretation={overview?.stats.fcrInterpretation || ''}
@@ -270,7 +256,19 @@ export const FeedingPage: React.FC = () => {
                 averageDailyGrams={overview?.stats.averageDailyGrams || 0}
                 isLoading={isLoading}
               />
-              
+              <FeedResponseChart 
+                responseBreakdown={overview?.stats.responseBreakdown || []}
+                dailyTrend={overview?.stats.dailyTrend || []}
+                isLoading={isLoading}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FeedInventoryPanel 
+                pondId={pondId}
+                currentStats={overview?.stats!}
+                isLoading={isLoading}
+              />
               <FeedingScheduleCard 
                 pondId={pondId}
                 schedule={overview?.schedule || null}
@@ -278,13 +276,16 @@ export const FeedingPage: React.FC = () => {
                   if (overview) setOverview({...overview, schedule: newSchedule});
                 }}
               />
-              
-              <FeedInventoryPanel 
-                pondId={pondId}
-                currentStats={overview?.stats!}
-                isLoading={isLoading}
-              />
             </div>
+
+            <FeedingCalendar 
+              dailyTrend={overview?.stats.dailyTrend || []}
+              currentMonth={new Date()}
+              onDayClick={(date) => {
+                setActiveTab('logs');
+              }}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       )}
@@ -432,6 +433,15 @@ export const FeedingPage: React.FC = () => {
           onCancel={() => setIsFullFormOpen(false)}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={!!deleteLogId}
+        title="Delete Feeding Log"
+        message="Are you sure you want to delete this feeding log? This action cannot be undone."
+        confirmText="Delete Log"
+        onConfirm={executeDeleteLog}
+        onCancel={() => setDeleteLogId(null)}
+      />
     </div>
   );
 };

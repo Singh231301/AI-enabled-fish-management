@@ -109,15 +109,15 @@ export const StockingForm: React.FC<StockingFormProps> = ({
         
         {/* SECTION 1: Species Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-900 border-b pb-2">Species Information</h3>
+          <h3 className="text-sm font-semibold text-white border-b pb-2">Species Information</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Species *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Species *</label>
               <input
                 list="species-options"
                 {...register("species")}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.species ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.species ? 'border-red-500' : 'border-slate-600'}`}
                 placeholder="Select or type species"
               />
               <datalist id="species-options">
@@ -127,34 +127,34 @@ export const StockingForm: React.FC<StockingFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Local Name</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Local Name</label>
               <input
                 type="text"
                 {...register("localName")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
                 placeholder="e.g., Pyasi"
               />
-              <p className="mt-1 text-xs text-gray-500">Optional — enter local/regional name</p>
+              <p className="mt-1 text-xs text-slate-400">Optional — enter local/regional name</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Stocking Date *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Stocking Date *</label>
               <input
                 type="date"
                 {...register("stockingDate")}
-                className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.stockingDate ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.stockingDate ? 'border-red-500' : 'border-slate-600'}`}
               />
               {errors.stockingDate && <p className="mt-1 text-xs text-red-500">{errors.stockingDate.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Source / Supplier</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Source / Supplier</label>
               <input
                 type="text"
                 {...register("sourceSupplier")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
                 placeholder="e.g., Mirzapur Fish Seed Center"
               />
             </div>
@@ -163,30 +163,30 @@ export const StockingForm: React.FC<StockingFormProps> = ({
 
         {/* SECTION 2: Quantity & Size */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-900 border-b pb-2">Quantity & Size</h3>
+          <h3 className="text-sm font-semibold text-white border-b pb-2">Quantity & Size</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Quantity *</label>
               <input
                 type="number"
                 {...register("quantity")}
-                className={`w-full px-4 py-3 text-lg border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.quantity ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full px-4 py-3 text-lg bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.quantity ? 'border-red-500' : 'border-slate-600'}`}
                 placeholder="e.g., 2500"
               />
               {errors.quantity && <p className="mt-1 text-xs text-red-500">{errors.quantity.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Avg Size at Stocking (cm) *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Avg Size at Stocking (cm) *</label>
               <input
                 type="number"
                 step="0.1"
                 {...register("fingerlingSize_cm")}
-                className={`w-full px-3 py-3 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.fingerlingSize_cm ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full px-3 py-3 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${errors.fingerlingSize_cm ? 'border-red-500' : 'border-slate-600'}`}
                 placeholder="e.g., 4.5"
               />
-              <p className="mt-1 text-xs text-gray-500">Average fingerling length at time of stocking</p>
+              <p className="mt-1 text-xs text-slate-400">Average fingerling length at time of stocking</p>
               {errors.fingerlingSize_cm && <p className="mt-1 text-xs text-red-500">{errors.fingerlingSize_cm.message}</p>}
             </div>
           </div>
@@ -197,31 +197,31 @@ export const StockingForm: React.FC<StockingFormProps> = ({
           <button
             type="button"
             onClick={() => setShowCost(!showCost)}
-            className="flex items-center text-sm font-semibold text-gray-900 focus:outline-none"
+            className="flex items-center text-sm font-semibold text-white focus:outline-none"
           >
             {showCost ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
             Add Cost Information (Optional)
           </button>
           
           {showCost && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-slate-750 p-4 rounded-lg border border-slate-700">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cost per Fingerling (₹)</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Cost per Fingerling (₹)</label>
                 <input
                   type="number"
                   step="0.01"
                   {...register("costPerFingerling")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Total Cost (₹)</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Total Cost (₹)</label>
                 <input
                   type="number"
                   step="0.01"
                   {...register("totalCost")}
-                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${isCostMismatched ? 'border-amber-500 bg-amber-50' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${isCostMismatched ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-600'}`}
                 />
               </div>
 
@@ -230,17 +230,17 @@ export const StockingForm: React.FC<StockingFormProps> = ({
                   type="button"
                   onClick={handleAutoCalculate}
                   disabled={!expectedTotal}
-                  className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full px-4 py-2 border border-sky-500 text-sky-400 rounded-md hover:bg-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Auto-calculate
                 </button>
               </div>
 
               {(quantity && costPerFingerling) ? (
-                <div className="col-span-3 text-sm text-gray-600 mt-2">
+                <div className="col-span-3 text-sm text-slate-300 mt-2">
                   <span className="font-medium">₹{costPerFingerling}</span> per fingerling × <span className="font-medium">{quantity}</span> fish = <span className="font-medium">₹{expectedTotal}</span> total
                   {isCostMismatched && (
-                    <span className="ml-2 text-amber-600 font-medium bg-amber-100 px-2 py-0.5 rounded">
+                    <span className="ml-2 text-amber-600 font-medium bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded">
                       ⚠️ Auto-calculated: ₹{expectedTotal} (differs from entered value)
                     </span>
                   )}
@@ -252,28 +252,28 @@ export const StockingForm: React.FC<StockingFormProps> = ({
 
         {/* SECTION 4: Notes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Notes</label>
           <textarea
             rows={3}
             {...register("notes")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
             placeholder="Any additional details..."
           />
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-slate-700">
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 font-medium transition-colors"
+            className="px-4 py-2 border border-slate-600 text-slate-300 rounded-md hover:bg-slate-750 font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium shadow-sm transition-colors"
+            className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 disabled:opacity-50 font-medium  transition-colors"
           >
             {isSubmitting ? 'Saving...' : existingStocking ? 'Update Record' : 'Save Stocking Record'}
           </button>

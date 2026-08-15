@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export const ProfileTab: React.FC = () => {
-  const [fullName, setFullName] = useState('');
+  const { user } = useAuth();
+  const [fullName, setFullName] = useState(user?.name || '');
   const [password, setPassword] = useState({ current: '', new: '', confirm: '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -80,7 +82,7 @@ export const ProfileTab: React.FC = () => {
               <input 
                 className="bg-white/5 border border-white/10 text-white/50 p-3 rounded-lg outline-none text-sm w-full"
                 type="email" 
-                value="manager@fishfarm.com"
+                value={user?.email || ''}
                 disabled
               />
               <span className="text-xs text-slate-400">Email cannot be changed</span>

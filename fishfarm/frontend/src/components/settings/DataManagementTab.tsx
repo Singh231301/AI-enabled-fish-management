@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export const DataManagementTab: React.FC = () => {
   const [modules, setModules] = useState({
@@ -20,16 +21,16 @@ export const DataManagementTab: React.FC = () => {
   };
 
   const handleExport = () => {
-    alert(`Exporting selected data in ${format} format...`);
+    toast.success(`Exporting selected data in ${format} format...`);
   };
 
   const handleDeleteAccount = () => {
     if (deleteInput === 'DELETE MY ACCOUNT') {
-      alert('Account deletion initiated.');
+      toast.success('Account deletion initiated.');
       setShowDeleteConfirm(false);
       setDeleteInput('');
     } else {
-      alert('Please type DELETE MY ACCOUNT to confirm.');
+      toast.error('Please type DELETE MY ACCOUNT to confirm.');
     }
   };
 
@@ -65,8 +66,8 @@ export const DataManagementTab: React.FC = () => {
             value={format} 
             onChange={(e) => setFormat(e.target.value)}
           >
-            <option value="JSON">JSON (.json)</option>
-            <option value="CSV">CSV (.csv)</option>
+            <option className="bg-slate-800" value="JSON">JSON (.json)</option>
+            <option className="bg-slate-800" value="CSV">CSV (.csv)</option>
           </select>
         </div>
 
