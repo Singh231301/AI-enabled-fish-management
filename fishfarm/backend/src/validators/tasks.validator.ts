@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TaskCategory, TaskPriority } from '@prisma/client';
+import { TaskCategory, TaskPriority, TaskStatus } from '@prisma/client';
 
 export const createTaskSchema = z.object({
   pondId: z.string()
@@ -129,7 +129,8 @@ const baseTaskSchema = z.object({
   reminderDaysBefore: z.number().int().min(0).max(30).optional().nullable(),
   tags: z.array(z.string()).max(10).optional(),
   estimatedMinutes: z.number().int().min(1).max(1440).optional().nullable(),
-  notes: z.string().max(1000).optional().nullable()
+  notes: z.string().max(1000).optional().nullable(),
+  status: z.nativeEnum(TaskStatus).optional().nullable()
 });
 
 export const updateTaskSchema = baseTaskSchema.omit({ pondId: true }).partial().refine(

@@ -31,7 +31,13 @@ export const FinancialsPage = () => {
   useEffect(() => {
     pondApi.getUserPonds().then(res => {
       setPonds(res.data);
-      if(res.data.length > 0) setCurrentPond(res.data[0]);
+      if (res.data.length > 0) {
+        const savedPondId = localStorage.getItem('fishfarm_selected_pond');
+        const savedPond = savedPondId ? res.data.find((pond: any) => pond.id === savedPondId) : null;
+        const pondToUse = savedPond || res.data[0];
+        setCurrentPond(pondToUse);
+        localStorage.setItem('fishfarm_selected_pond', pondToUse.id);
+      }
     });
   }, []);
   const [activeTab, setActiveTab] = useState<'overview' | 'expenses' | 'sales' | 'analysis'>('overview');
@@ -148,6 +154,13 @@ export const FinancialsPage = () => {
     }
   };
 
+  const handlePondChange = (pondId: string) => {
+    const nextPond = ponds.find((pond) => pond.id === pondId);
+    if (!nextPond) return;
+    setCurrentPond(nextPond);
+    localStorage.setItem('fishfarm_selected_pond', pondId);
+  };
+
   if (!currentPond) {
     return (
       <>
@@ -167,7 +180,20 @@ export const FinancialsPage = () => {
             <p className="text-slate-400">Track expenses, sales, and analyze profitability.</p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            {ponds.length > 1 && (
+              <select
+                value={currentPond.id}
+                onChange={(e) => handlePondChange(e.target.value)}
+                className="px-3 py-2 bg-slate-800 border border-slate-700 text-white font-medium rounded-lg focus:ring-sky-500 focus:border-sky-500"
+              >
+                {ponds.map((pond) => (
+                  <option key={pond.id} value={pond.id}>
+                    {pond.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <button
               onClick={() => { setSelectedExpense(null); setShowExpenseForm(true); }}
               className="px-4 py-2 bg-slate-800 border border-slate-700 text-white font-medium rounded-lg hover:bg-slate-700 transition-colors shadow-sm"

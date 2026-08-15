@@ -248,6 +248,14 @@ export class FinancialService {
       });
     }
 
+    await this.activityRepo.create({
+      user: { connect: { id: userId } },
+      action: 'CREATED',
+      module: 'FINANCIAL_SALE',
+      recordId: sale.id,
+      details: { amount: dto.totalAmount, buyer: dto.buyerName, quantity: dto.fishQuantityKg }
+    });
+
     return sale;
   }
 

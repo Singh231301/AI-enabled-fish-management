@@ -1,5 +1,5 @@
 import React from 'react';
-import { Task } from '../../types/tasks.types';
+import { Task, TaskStatus } from '../../types/tasks.types';
 import { TASK_CATEGORY_CONFIG, TASK_PRIORITY_CONFIG, TASK_STATUS_CONFIG } from '../../utils/constants';
 import { Clock, Calendar, CheckCircle2, RotateCw, Sparkles, AlertCircle, XCircle } from 'lucide-react';
 import { format, isPast, isToday } from 'date-fns';
@@ -9,10 +9,11 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
   onComplete: (task: Task) => void;
   onSkip: (task: Task) => void;
+  onStatusChange?: (task: Task, newStatus: TaskStatus) => void;
   viewMode?: 'list' | 'kanban' | 'calendar';
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onComplete, onSkip, viewMode = 'list' }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onComplete, onSkip, onStatusChange, viewMode = 'list' }) => {
   const categoryConfig = TASK_CATEGORY_CONFIG[task.category] || TASK_CATEGORY_CONFIG['DAILY'];
   const priorityConfig = TASK_PRIORITY_CONFIG[task.priority] || TASK_PRIORITY_CONFIG['MEDIUM'];
   const statusConfig = TASK_STATUS_CONFIG[task.status] || TASK_STATUS_CONFIG['PENDING'];
@@ -44,6 +45,34 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onComplete, on
             </span>
           )}
         </div>
+        
+        {/* Kanban Action Buttons */}
+        {task.status !== 'COMPLETED' && task.status !== 'SKIPPED' && onStatusChange && (
+          <div className="flex gap-2 mt-3 pt-3 border-t border-slate-700/50" onClick={e => e.stopPropagation()}>
+            {task.status === 'PENDING' && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onStatusChange(task, 'IN_PROGRESS'); }}
+                className="flex-1 px-3 py-1.5 text-xs font-medium bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 rounded-lg transition-colors border border-sky-500/20"
+              >
+                Start Task
+              </button>
+            )}
+            {task.status === 'IN_PROGRESS' && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onStatusChange(task, 'PENDING'); }}
+                className="flex-1 px-3 py-1.5 text-xs font-medium bg-slate-700/50 text-slate-300 hover:bg-slate-700 rounded-lg transition-colors border border-slate-600"
+              >
+                Move to Pending
+              </button>
+            )}
+            <button
+              onClick={(e) => { e.stopPropagation(); onComplete(task); }}
+              className="flex-1 px-3 py-1.5 text-xs font-medium bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors border border-green-500/20"
+            >
+              Complete
+            </button>
+          </div>
+        )}
       </div>
     );
   }

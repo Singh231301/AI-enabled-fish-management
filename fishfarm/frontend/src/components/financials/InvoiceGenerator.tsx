@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sale } from '../../types/financials.types';
 import { generateInvoice } from '../../utils/pdf-generator';
 import { format } from 'date-fns';
+import { Edit2, Check } from 'lucide-react';
 
 interface InvoiceGeneratorProps {
   sale: Sale;
@@ -14,6 +15,8 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   farmDetails = { name: "AquaManager Farm", address: "Local Village, District", phone: "+91 9000000000" },
   onClose 
 }) => {
+  const [isEditingFarm, setIsEditingFarm] = useState(false);
+  const [editableFarm, setEditableFarm] = useState(farmDetails);
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-slate-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-800">
@@ -28,14 +31,44 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
           {/* A4 Size Paper Representation */}
           <div className="bg-slate-900 shadow-sm w-full max-w-[210mm] p-8 min-h-[297mm] border border-slate-800">
             <div className="text-center mb-8 border-b-2 border-slate-800 pb-4">
-              <h1 className="text-2xl font-bold uppercase tracking-widest text-white">TAX INVOICE</h1>
+              <h1 className="text-2xl font-bold uppercase tracking-widest text-white">INVOICE</h1>
             </div>
 
-            <div className="flex justify-between mb-8">
-              <div>
-                <h2 className="text-xl font-bold text-sky-400">{farmDetails.name}</h2>
-                <p className="text-sm text-slate-400 whitespace-pre-line">{farmDetails.address}</p>
-                <p className="text-sm text-slate-400 mt-1">Phone: {farmDetails.phone}</p>
+            <div className="flex justify-between mb-8 group relative">
+              <div className="w-1/2">
+                {isEditingFarm ? (
+                  <div className="flex flex-col gap-2">
+                    <input 
+                      type="text" 
+                      value={editableFarm.name} 
+                      onChange={e => setEditableFarm({...editableFarm, name: e.target.value})} 
+                      className="bg-slate-950 border border-sky-500 rounded px-2 py-1 text-xl font-bold text-sky-400 w-full"
+                    />
+                    <textarea 
+                      value={editableFarm.address} 
+                      onChange={e => setEditableFarm({...editableFarm, address: e.target.value})} 
+                      className="bg-slate-950 border border-sky-500 rounded px-2 py-1 text-sm text-slate-400 w-full resize-none h-16"
+                    />
+                    <input 
+                      type="text" 
+                      value={editableFarm.phone} 
+                      onChange={e => setEditableFarm({...editableFarm, phone: e.target.value})} 
+                      className="bg-slate-950 border border-sky-500 rounded px-2 py-1 text-sm text-slate-400 w-full"
+                    />
+                    <button onClick={() => setIsEditingFarm(false)} className="flex items-center justify-center gap-1 bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 rounded text-xs mt-1 w-max">
+                      <Check size={14} /> Save Details
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative cursor-pointer hover:bg-slate-800/50 p-2 -m-2 rounded transition-colors" onClick={() => setIsEditingFarm(true)}>
+                    <h2 className="text-xl font-bold text-sky-400">{editableFarm.name}</h2>
+                    <p className="text-sm text-slate-400 whitespace-pre-line">{editableFarm.address}</p>
+                    <p className="text-sm text-slate-400 mt-1">Phone: {editableFarm.phone}</p>
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-sky-400 bg-sky-400/10 p-1.5 rounded-full">
+                      <Edit2 size={14} />
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="text-right text-sm">
                 <p className="text-slate-300"><span className="font-semibold text-white">Invoice No:</span> {sale.invoiceNumber || 'N/A'}</p>
@@ -124,7 +157,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
             Close
           </button>
           <button
-            onClick={() => generateInvoice(sale, farmDetails)}
+            onClick={() => generateInvoice(sale, editableFarm)}
             className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-500 transition-colors flex items-center gap-2"
           >
             <span>📥</span> Download PDF

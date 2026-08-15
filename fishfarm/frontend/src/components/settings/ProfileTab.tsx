@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 
 export const ProfileTab: React.FC = () => {
   const { user } = useAuth();
-  const [fullName, setFullName] = useState(user?.name || '');
+  const [fullName, setFullName] = useState(user?.fullName || '');
   const [password, setPassword] = useState({ current: '', new: '', confirm: '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });

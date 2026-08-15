@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { dashboardApi } from '../api/endpoints/dashboard.api';
+import * as financialsApi from '../api/endpoints/financials.api';
 import { DashboardData } from '../types/dashboard.types';
+import { FinancialStats } from '../types/financials.types';
 import { 
   Plus, 
   RefreshCw, 
@@ -31,6 +33,7 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [financialStats, setFinancialStats] = useState<FinancialStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPondId, setSelectedPondId] = useState<string | null>(null);
@@ -78,9 +81,13 @@ export const Dashboard: React.FC = () => {
     if (!silent) setIsLoading(true);
     setError(null);
     try {
-      const result = await dashboardApi.getDashboard(pondId);
+      const [result, stats] = await Promise.all([
+        dashboardApi.getDashboard(pondId),
+        financialsApi.getFinancialStats(pondId, 'all').catch(() => null)
+      ]);
       if (result.success) {
         setDashboardData(result.data);
+        setFinancialStats(stats);
         setLastRefreshed(new Date());
       } else {
         setError(result.message || 'Failed to load dashboard');
@@ -147,6 +154,10 @@ export const Dashboard: React.FC = () => {
   // Helper variables for data
   const data = dashboardData;
   const basicStats = data?.basicStats;
+  const totalInvested = financialStats?.totalExpenses ?? basicStats?.totalInvested ?? 0;
+  const currentMonthExpense = financialStats?.currentMonthExpenses ?? basicStats?.currentMonthExpense ?? 0;
+  const netProfitLoss = financialStats?.netProfitLoss ?? basicStats?.netProfitLoss ?? 0;
+  const netProfitLossPercent = totalInvested > 0 ? Math.round(Math.abs((netProfitLoss / totalInvested) * 100)) : 0;
   const todayMortality = basicStats?.todayMortality || 0;
   const phValue = data?.latestWater?.phValue;
   const phStatus = data?.latestWater?.phStatus || 'unknown';
@@ -286,19 +297,23 @@ export const Dashboard: React.FC = () => {
 
         <StatCard
           title="Total Invested"
-          value={formatCurrency(basicStats?.totalInvested || 0)}
-          subtitle={`${formatCurrency(basicStats?.currentMonthExpense || 0)} this month`}
+          value={formatCurrency(totalInvested)}
+          subtitle={`${formatCurrency(currentMonthExpense)} this month`}
           icon={IndianRupee}
           iconBgColor="bg-amber-500/20"
           iconColor="text-amber-400"
           isLoading={isLoading}
-          trend={{ value: 0, label: 'net P&L', positive: (basicStats?.netProfitLoss || 0) >= 0 }}
+          trend={{ 
+            value: netProfitLossPercent,
+            label: 'net P&L', 
+            positive: netProfitLoss >= 0 
+          }}
         />
 
         <StatCard
           title="Estimated Biomass"
           value={`${basicStats?.estimatedBiomassKg?.toFixed(1) || 0} kg`}
-          subtitle={basicStats?.latestAvgWeightGrams ? `${basicStats.latestAvgWeightGrams}g avg weight` : 'No sample yet'}
+          subtitle={basicStats?.latestAvgWeightGrams ? `${basicStats.latestAvgWeightGrams}g avg weight` : (basicStats?.fishAgeDays || 0) > 0 ? `Estimated by age (${basicStats?.fishAgeDays} days)` : 'No sample yet'}
           icon={Scale}
           iconBgColor="bg-green-500/20"
           iconColor="text-green-400"
@@ -515,7 +530,7 @@ export const Dashboard: React.FC = () => {
                   })}
                 </div>
                 <div className="pt-2 border-t border-slate-700 flex justify-between items-center">
-                  <span className="font-bold text-white">Total: {formatCurrency(basicStats?.currentMonthExpense || 0)}</span>
+                  <span className="font-bold text-white">Total: {formatCurrency(currentMonthExpense)}</span>
                   <button onClick={() => navigate('/financials')} className="text-xs text-sky-400 hover:text-sky-300 font-medium">View All &rarr;</button>
                 </div>
               </div>

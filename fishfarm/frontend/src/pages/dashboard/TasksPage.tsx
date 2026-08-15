@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Task, TaskOverview } from '../../types/tasks.types';
+import { Task, TaskOverview, TaskStatus } from '../../types/tasks.types';
 import { tasksApi } from '../../api/endpoints/tasks.api';
 import { toast } from 'react-hot-toast';
 import { Plus, ListTodo, Calendar, LayoutTemplate } from 'lucide-react';
@@ -60,6 +60,17 @@ export const TasksPage: React.FC = () => {
       throw err;
     }
   };
+
+  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+    try {
+      await tasksApi.update(task.id, { status: newStatus });
+      toast.success(`Task marked as ${newStatus.replace('_', ' ').toLowerCase()}`);
+      fetchOverview();
+    } catch (err) {
+      toast.error('Failed to update task status');
+    }
+  };
+
 
   const handleCompleteSubmit = async (data: any) => {
     if (!completionForm.task) return;
@@ -178,6 +189,7 @@ export const TasksPage: React.FC = () => {
                   onTaskClick={openEditForm}
                   onComplete={(t) => openCompletionForm(t, 'complete')}
                   onSkip={(t) => openCompletionForm(t, 'skip')}
+                  onStatusChange={handleStatusChange}
                 />
               )}
               {activeTab === 'CALENDAR' && (

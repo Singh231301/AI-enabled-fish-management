@@ -343,6 +343,12 @@ export class TaskService {
         updateData.assignedTo = { disconnect: true };
       }
     }
+    if (dto.status !== undefined) {
+      updateData.status = dto.status;
+      if (dto.status === 'COMPLETED') {
+        updateData.completedDate = new Date();
+      }
+    }
 
     const updatedTask = await this.taskRepo.update(id, updateData);
 

@@ -8,7 +8,7 @@ export const generateInvoice = (sale: Sale, farmDetails: { name: string, address
   
   // Header
   doc.setFontSize(20);
-  doc.text('TAX INVOICE', 105, 15, { align: 'center' });
+  doc.text('INVOICE', 105, 15, { align: 'center' });
   
   doc.setFontSize(12);
   doc.text(farmDetails.name, 14, 25);

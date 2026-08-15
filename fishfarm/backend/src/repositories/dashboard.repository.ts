@@ -79,8 +79,14 @@ export class DashboardRepository {
 
     const latestAvgWeightGrams = latestGrowth?.averageWeightGrams || null;
     let estimatedBiomassKg = 0;
-    if (estimatedAlive > 0 && latestAvgWeightGrams) {
-      estimatedBiomassKg = (estimatedAlive * latestAvgWeightGrams) / 1000;
+    if (estimatedAlive > 0) {
+      if (latestAvgWeightGrams) {
+        estimatedBiomassKg = (estimatedAlive * latestAvgWeightGrams) / 1000;
+      } else if (fishAgeDays > 0) {
+        // Fallback: estimate 5g per day growth if no sample
+        const expectedWeightGrams = Math.min(500, fishAgeDays * 5);
+        estimatedBiomassKg = (estimatedAlive * expectedWeightGrams) / 1000;
+      }
     }
 
     return {

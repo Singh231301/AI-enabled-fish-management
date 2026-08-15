@@ -252,6 +252,14 @@ export class InventoryService {
       } as any);
     }
 
+    await this.activityRepo.create({
+      action: 'CREATE',
+      module: 'INVENTORY',
+      recordId: transaction.id,
+      details: { name: `Purchased ${dto.quantity}${item.unit} of ${item.itemName}` },
+      user: { connect: { id: userId } }
+    } as any);
+
     const updatedInventory = await this.inventoryRepo.findById(dto.inventoryId);
     return { inventory: updatedInventory!, transaction };
   }

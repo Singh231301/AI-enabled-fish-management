@@ -122,7 +122,9 @@ export interface CreateTaskDTO {
   notes?: string;
 }
 
-export interface UpdateTaskDTO extends Partial<Omit<CreateTaskDTO, 'pondId'>> {}
+export interface UpdateTaskDTO extends Partial<Omit<CreateTaskDTO, 'pondId'>> {
+  status?: TaskStatus;
+}
 
 export interface CompleteTaskDTO {
   completionNote?: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Task } from '../../types/tasks.types';
+import { Task, TaskStatus } from '../../types/tasks.types';
 import { TaskCard } from './TaskCard';
 import { Circle, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { isPast, isToday } from 'date-fns';
@@ -8,9 +8,11 @@ interface TaskKanbanProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
   onComplete: (task: Task) => void;
+  onSkip: (task: Task) => void;
+  onStatusChange?: (task: Task, newStatus: TaskStatus) => void;
 }
 
-export const TaskKanban: React.FC<TaskKanbanProps> = ({ tasks, onTaskClick, onComplete, onSkip }) => {
+export const TaskKanban: React.FC<TaskKanbanProps> = ({ tasks, onTaskClick, onComplete, onSkip, onStatusChange }) => {
   const isTaskOverdue = (t: Task) => t.status === 'PENDING' && isPast(new Date(t.dueDate)) && !isToday(new Date(t.dueDate));
 
   const pendingTasks = tasks.filter(t => t.status === 'PENDING' && !isTaskOverdue(t));
@@ -84,6 +86,7 @@ export const TaskKanban: React.FC<TaskKanbanProps> = ({ tasks, onTaskClick, onCo
                   onEdit={onTaskClick}
                   onComplete={onComplete}
                   onSkip={onSkip}
+                  onStatusChange={onStatusChange}
                   viewMode="kanban"
                 />
               ))
