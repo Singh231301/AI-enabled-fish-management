@@ -56,8 +56,18 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
   const style = styles[type];
 
   return (
-    <div className={`p-4 rounded-r-xl flex items-start sm:items-center justify-between gap-4 ${style.container}`}>
-      <div className="flex gap-4 items-start sm:items-center w-full">
+    <div className={`relative p-4 rounded-r-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${style.container}`}>
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          className={`absolute top-2 right-2 p-1 rounded-lg transition-colors ${style.dismiss} sm:hidden`}
+          aria-label="Dismiss alert"
+        >
+          <X size={18} />
+        </button>
+      )}
+
+      <div className="flex gap-3 sm:gap-4 items-start sm:items-center w-full pr-6 sm:pr-0">
         <div className="shrink-0 mt-0.5 sm:mt-0">{style.icon}</div>
         <div className="flex-1">
           <h4 className={`font-semibold ${style.title}`}>{title}</h4>
@@ -65,11 +75,11 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
         </div>
       </div>
       
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto pt-2 sm:pt-0">
         {actionLabel && onAction && (
           <button
             onClick={onAction}
-            className={`text-sm font-medium px-4 py-1.5 rounded-lg transition-colors whitespace-nowrap ${style.button}`}
+            className={`text-sm font-medium px-4 py-2 sm:py-1.5 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto text-center ${style.button}`}
           >
             {actionLabel}
           </button>
@@ -78,7 +88,7 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className={`p-1.5 rounded-lg transition-colors ${style.dismiss}`}
+            className={`hidden sm:block p-1.5 rounded-lg transition-colors ${style.dismiss}`}
             aria-label="Dismiss alert"
           >
             <X size={20} />

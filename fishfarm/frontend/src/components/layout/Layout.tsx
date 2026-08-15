@@ -26,8 +26,10 @@ export const Layout: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-900">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
+    return <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950">
+      <img src="/logo.jpg" alt="AquaSync" className="w-24 h-24 rounded-full object-cover shadow-[0_0_20px_rgba(14,165,233,0.3)] animate-pulse mb-6" />
+      <div className="text-white text-2xl font-bold tracking-wide mb-6">AquaSync</div>
+      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-sky-500"></div>
     </div>;
   }
 
@@ -69,7 +71,8 @@ export const Layout: React.FC = () => {
               <Menu size={24} />
             </button>
             <span className="text-xl font-bold text-white flex items-center gap-2 md:hidden">
-              🐟 FishFarm
+              <img src="/logo.jpg" alt="AquaSync" className="w-6 h-6 rounded-full object-cover shadow border border-slate-700" />
+              AquaSync
             </span>
           </div>
 

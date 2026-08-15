@@ -2,7 +2,7 @@ import { app } from './app';
 import { env } from './config/env';
 import { prisma } from './config/database';
 import { logger } from './utils/logger';
-import './container'; // Ensure container is initialized
+import { startScheduler } from './container';
 
 const PORT = env.PORT || 3000;
 
@@ -14,6 +14,8 @@ async function startServer() {
     const server = app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT} in ${env.NODE_ENV} mode`);
     });
+
+    startScheduler();
 
     const shutdown = async () => {
       logger.info('Graceful shutdown initiated');

@@ -173,7 +173,10 @@ const reportsService = new ReportsService(
 );
 
 const schedulerService = new SchedulerService(feedingScheduleRepo, feedingLogRepo, notificationService, aiService);
-schedulerService.start();
+
+export const startScheduler = () => {
+  schedulerService.start();
+};
 
 // 3. Controllers
 export const authController = new AuthController(authService);

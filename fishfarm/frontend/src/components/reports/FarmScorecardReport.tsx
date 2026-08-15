@@ -40,7 +40,7 @@ const FarmScorecardReport: React.FC<Props> = ({ data }) => {
             justifyContent: 'center',
             boxShadow: 'inset 0 4px 10px rgba(0,0,0,0.5)'
           }}>
-            <span style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1 }}>{score}</span>
+            <span style={{ fontSize: '2.5rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1 }}>{Math.round(score)}</span>
             <span style={{ fontSize: '1.2rem', fontWeight: 700, color: hexColor }}>Grade {grade}</span>
           </div>
         </div>
@@ -56,7 +56,7 @@ const FarmScorecardReport: React.FC<Props> = ({ data }) => {
       <div style={{ marginBottom: '12px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}>
           <span style={{ color: '#cbd5e1' }}>{label}</span>
-          <span style={{ fontWeight: 600, color: colorMap[scoreObj.color] }}>{scoreObj.grade} ({scoreObj.score}%)</span>
+          <span style={{ fontWeight: 600, color: colorMap[scoreObj.color] }}>{scoreObj.grade} ({Math.round(scoreObj.score)}%)</span>
         </div>
         <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
           <div style={{ width: `${scoreObj.score}%`, height: '100%', background: colorMap[scoreObj.color], borderRadius: '4px' }} />

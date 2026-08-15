@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "npm run db:push && ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "npm run db:generate && tsc",
+    "postinstall": "prisma generate",
+    "build": "tsc",
     "start": "node dist/server.js",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

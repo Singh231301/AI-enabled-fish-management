@@ -56,88 +56,57 @@ export const AIChatPage: React.FC = () => {
       background: 'transparent',
     }}>
       {/* Page Header */}
-      <div style={{
-        padding: '16px 24px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 12,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button
-            onClick={() => setHistoryOpen(true)}
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 8,
-              padding: '8px 12px',
-              color: '#aaa',
-              cursor: 'pointer',
-              fontSize: 14,
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-          >
-            💬
-          </button>
-          <div>
-            <h1 style={{ color: '#fff', margin: 0, fontSize: 20, fontWeight: 700 }}>AI Assistant</h1>
-            <p style={{ color: '#888', margin: 0, fontSize: 12 }}>
-              Powered by Google Gemini • Context-aware farm advisor
-            </p>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-2 md:gap-3 px-3 py-2 md:px-6 md:py-4 border-b border-slate-800 shrink-0">
+        <div className="flex items-center justify-between w-full md:w-auto gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setHistoryOpen(true)}
+              className="bg-white/5 border border-white/10 rounded-lg p-2 text-slate-400 hover:bg-white/10 transition-all"
+            >
+              💬
+            </button>
+            <div className="hidden sm:block">
+              <h1 className="text-white m-0 text-lg font-bold">AI Assistant</h1>
+            </div>
           </div>
-        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Pond Selector */}
+          {/* Pond Selector (Mobile: Right aligned in first row) */}
           <select
             value={selectedPondId || ''}
             onChange={handlePondChange}
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 8,
-              padding: '8px 12px',
-              color: '#fff',
-              fontSize: 13,
-              cursor: 'pointer',
-              outline: 'none',
-              minWidth: 160,
-            }}
+            className="md:hidden bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-white text-xs cursor-pointer outline-none min-w-[120px]"
           >
-            <option value="" style={{ background: '#1a1a2e' }}>Select Pond...</option>
+            <option value="" className="bg-slate-900">Select Pond...</option>
             {ponds.map(p => (
-              <option key={p.id} value={p.id} style={{ background: '#1a1a2e' }}>{p.name}</option>
+              <option key={p.id} value={p.id} className="bg-slate-900">{p.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between w-full md:w-auto gap-2">
+          {/* Pond Selector (Desktop) */}
+          <select
+            value={selectedPondId || ''}
+            onChange={handlePondChange}
+            className="hidden md:block bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm cursor-pointer outline-none min-w-[160px]"
+          >
+            <option value="" className="bg-slate-900">Select Pond...</option>
+            {ponds.map(p => (
+              <option key={p.id} value={p.id} className="bg-slate-900">{p.name}</option>
             ))}
           </select>
 
           {/* Tab Switcher */}
-          <div style={{
-            display: 'flex',
-            background: 'rgba(255,255,255,0.04)',
-            borderRadius: 10,
-            padding: 3,
-            gap: 2,
-          }}>
+          <div className="flex bg-white/5 rounded-lg p-1 gap-1 w-full md:w-auto overflow-x-auto hide-scrollbar">
             {TABS.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                style={{
-                  background: activeTab === tab ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'transparent',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  color: activeTab === tab ? '#fff' : '#888',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: activeTab === tab ? 600 : 400,
-                  transition: 'all 0.2s',
-                }}
+                className={`flex-1 md:flex-none border-none rounded-md px-3 py-1.5 cursor-pointer text-xs sm:text-sm whitespace-nowrap transition-all ${
+                  activeTab === tab 
+                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold' 
+                    : 'bg-transparent text-slate-400 font-normal hover:bg-white/5'
+                }`}
               >
                 {tab === 'Chat' && '💬 '}
                 {tab === 'Briefings' && '📊 '}

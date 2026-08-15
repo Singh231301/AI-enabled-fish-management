@@ -140,54 +140,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ pondId, selectedPondName,
       position: 'relative',
     }}>
       {/* Header */}
-      <div style={{
-        padding: '12px 20px',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 22 }}>🐟</span>
-          <div>
-            <div style={{ color: '#fff', fontWeight: 600, fontSize: 15 }}>FishFarm AI</div>
-            <div style={{ color: '#888', fontSize: 12 }}>
-              {selectedPondName ? `Context: ${selectedPondName}` : 'Select a pond for context-aware advice'}
+      <div className="px-3 py-2 md:px-5 md:py-3 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+          <img src="/logo.jpg" alt="AquaSync" className="w-6 h-6 md:w-8 md:h-8 rounded-full object-cover shadow border border-slate-700 shrink-0" />
+          <div className="truncate">
+            <div className="text-white font-semibold text-sm md:text-base truncate">AquaSync AI</div>
+            <div className="text-slate-400 text-xs truncate">
+              {selectedPondName ? `Context: ${selectedPondName}` : 'Select a pond'}
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="flex gap-2 items-center shrink-0">
           <button
             onClick={() => setLanguage(l => l === 'en' ? 'hinglish' : 'en')}
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              borderRadius: 8,
-              padding: '6px 12px',
-              color: '#ccc',
-              cursor: 'pointer',
-              fontSize: 12,
-              transition: 'all 0.2s',
-            }}
+            className="bg-white/5 border border-white/15 rounded-md px-2 py-1 md:px-3 md:py-1.5 text-slate-300 text-xs cursor-pointer hover:bg-white/10 transition-all whitespace-nowrap"
             title="Toggle language"
           >
             {language === 'en' ? '🇮🇳 Hinglish' : '🇬🇧 English'}
           </button>
           <button
             onClick={handleNewChat}
-            style={{
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              border: 'none',
-              borderRadius: 8,
-              padding: '6px 14px',
-              color: '#fff',
-              cursor: 'pointer',
-              fontSize: 12,
-              fontWeight: 600,
-            }}
+            className="bg-gradient-to-br from-indigo-500 to-purple-600 border-none rounded-md px-2 py-1 md:px-3 md:py-1.5 text-white font-semibold text-xs cursor-pointer whitespace-nowrap"
           >
-            + New Chat
+            + <span className="hidden sm:inline">New Chat</span>
           </button>
         </div>
       </div>

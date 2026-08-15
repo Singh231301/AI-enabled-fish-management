@@ -204,43 +204,45 @@ export const StockingForm: React.FC<StockingFormProps> = ({
           </button>
           
           {showCost && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-slate-750 p-4 rounded-lg border border-slate-700">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Cost per Fingerling (₹)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  {...register("costPerFingerling")}
-                  className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md  focus:ring-sky-500 focus:border-sky-500"
-                />
+            <div className="flex flex-col gap-4 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Cost per Fingerling (₹)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    {...register("costPerFingerling")}
+                    className="w-full px-3 py-2 bg-slate-800 text-white border border-slate-600 rounded-md focus:ring-sky-500 focus:border-sky-500"
+                  />
+                </div>
+
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Total Cost (₹)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    {...register("totalCost")}
+                    className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md focus:ring-sky-500 focus:border-sky-500 ${isCostMismatched ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-600'}`}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Total Cost (₹)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  {...register("totalCost")}
-                  className={`w-full px-3 py-2 bg-slate-800 text-white border rounded-md  focus:ring-sky-500 focus:border-sky-500 ${isCostMismatched ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-600'}`}
-                />
-              </div>
-
-              <div>
+              <div className="w-full flex justify-end">
                 <button
                   type="button"
                   onClick={handleAutoCalculate}
                   disabled={!expectedTotal}
-                  className="w-full px-4 py-2 border border-sky-500 text-sky-400 rounded-md hover:bg-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 border border-sky-500 text-sky-400 rounded-md hover:bg-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
                 >
                   Auto-calculate
                 </button>
               </div>
 
               {(quantity && costPerFingerling) ? (
-                <div className="col-span-3 text-sm text-slate-300 mt-2">
+                <div className="w-full mt-2 text-sm text-slate-300">
                   <span className="font-medium">₹{costPerFingerling}</span> per fingerling × <span className="font-medium">{quantity}</span> fish = <span className="font-medium">₹{expectedTotal}</span> total
                   {isCostMismatched && (
-                    <span className="ml-2 text-amber-600 font-medium bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded">
+                    <span className="inline-block mt-1 md:mt-0 md:ml-2 text-amber-600 font-medium bg-amber-500/20 px-2 py-0.5 rounded">
                       ⚠️ Auto-calculated: ₹{expectedTotal} (differs from entered value)
                     </span>
                   )}

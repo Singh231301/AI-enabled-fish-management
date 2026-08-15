@@ -2,12 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <link rel="apple-touch-icon" href="/logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fish Farm Management</title>
+    <title>AquaSync</title>
+    <style>
+      body, html { margin: 0; padding: 0; background-color: #020617; height: 100vh; }
+      #app-loader {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        height: 100vh; width: 100vw; font-family: system-ui, -apple-system, sans-serif;
+      }
+      .loader-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); animation: pulse 2s infinite ease-in-out; }
+      .loader-title { color: #f8fafc; font-size: 24px; font-weight: 700; margin-top: 24px; letter-spacing: 1px; }
+      .loader-spinner { width: 40px; height: 40px; border: 3px solid rgba(14, 165, 233, 0.2); border-top-color: #0ea5e9; border-radius: 50%; margin-top: 24px; animation: spin 1s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(14, 165, 233, 0.6); } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-loader">
+        <img src="/logo.jpg" alt="AquaSync Logo" class="loader-logo" />
+        <div class="loader-title">AquaSync</div>
+        <div class="loader-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

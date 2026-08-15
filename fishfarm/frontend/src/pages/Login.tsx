@@ -28,9 +28,11 @@ export const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-slate-800 p-8 rounded-xl border border-slate-700 shadow-2xl">
         <div>
-          <div className="text-5xl text-center mb-4">🐟</div>
-          <h2 className="text-center text-3xl font-extrabold text-white">
-            FishFarm Manager
+          <div className="text-center">
+            <span className="text-3xl font-bold text-white tracking-wide">AquaSync</span>
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+            Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-slate-400">
             Sign in to access your dashboard

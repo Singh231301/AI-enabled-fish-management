@@ -60,9 +60,9 @@ export const TaskKanban: React.FC<TaskKanbanProps> = ({ tasks, onTaskClick, onCo
   ];
 
   return (
-    <div className="flex h-[calc(100vh-220px)] overflow-x-auto gap-6 pb-4">
+    <div className="flex h-[calc(100vh-220px)] overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory md:snap-none hide-scrollbar px-2 md:px-0">
       {columns.map(col => (
-        <div key={col.id} className={`flex-shrink-0 w-80 flex flex-col rounded-xl border ${col.headerBorder} ${col.bg}`}>
+        <div key={col.id} className={`snap-center flex-shrink-0 w-[85vw] max-w-[320px] md:w-80 flex flex-col rounded-xl border ${col.headerBorder} ${col.bg}`}>
           <div className="p-4 border-b border-inherit flex items-center justify-between bg-slate-800/50 rounded-t-xl">
             <div className="flex items-center gap-2">
               {col.icon}
