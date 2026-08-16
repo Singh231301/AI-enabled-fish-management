@@ -72,9 +72,10 @@ export const fishApi = {
 
   updateMortality: async (
     id: string, 
+    pondId: string,
     data: Partial<CreateMortalityForm>
   ): Promise<ApiResponse<MortalityLog>> => {
-    const res = await api.put(`/fish/mortality/${id}`, data);
+    const res = await api.put(`/fish/mortality/${id}?pondId=${pondId}`, data);
     return res.data;
   },
 
@@ -112,9 +113,10 @@ export const fishApi = {
 
   updateGrowthSample: async (
     id: string, 
+    pondId: string,
     data: Partial<CreateGrowthSampleForm>
   ): Promise<ApiResponse<FishGrowthSample>> => {
-    const res = await api.put(`/fish/growth/${id}`, data);
+    const res = await api.put(`/fish/growth/${id}?pondId=${pondId}`, data);
     return res.data;
   },
 

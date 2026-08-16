@@ -70,7 +70,7 @@ export const GrowthSampleForm: React.FC<GrowthSampleFormProps> = ({
       };
 
       if (existingSample) {
-        const res = await fishApi.updateGrowthSample(existingSample.id, payload);
+        const res = await fishApi.updateGrowthSample(existingSample.id, pondId, payload);
         toast.success("Growth sample updated!");
         onSuccess(res.data);
       } else {

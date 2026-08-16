@@ -68,7 +68,7 @@ export const MortalityLogForm: React.FC<MortalityLogFormProps> = ({
     try {
       setIsSubmitting(true);
       if (existingLog) {
-        const res = await fishApi.updateMortality(existingLog.id, data);
+        const res = await fishApi.updateMortality(existingLog.id, pondId, data);
         toast.success("Mortality log updated!");
         onSuccess(res.data);
       } else {
