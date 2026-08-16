@@ -60,6 +60,11 @@ export const inventoryApi = {
     return response.data;
   },
 
+  deleteTransaction: async (pondId: string, id: string) => {
+    const response = await axiosInstance.delete<ApiResponse<null>>(`/inventory/transactions/${id}?pondId=${pondId}`);
+    return response.data.data;
+  },
+
   recordPurchase: async (data: RecordPurchaseDTO) => {
     const response = await axiosInstance.post<ApiResponse<any>>(`/inventory/transactions/purchase`, data);
     return response.data.data;

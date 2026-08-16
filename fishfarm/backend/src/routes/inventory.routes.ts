@@ -19,6 +19,7 @@ router.get('/transactions', inventoryController.getTransactions);
 router.post('/transactions/purchase', requireRole('ADMIN'), inventoryController.recordPurchase);
 router.post('/transactions/usage', requireRole('ADMIN', 'HELPER'), inventoryController.recordUsage);
 router.post('/transactions/adjust', requireRole('ADMIN'), inventoryController.adjustStock);
+router.delete('/transactions/:id', requireRole('ADMIN'), inventoryController.deleteTransaction);
 
 // Items
 router.get('/', inventoryController.getItems);

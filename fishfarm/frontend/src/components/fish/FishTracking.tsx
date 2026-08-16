@@ -10,6 +10,7 @@ import { MortalityLogForm } from './MortalityLogForm';
 import { GrowthSampleForm } from './GrowthSampleForm';
 import { StockingCard } from './StockingCard';
 import { MortalityTable } from './MortalityTable';
+import { GrowthTable } from './GrowthTable';
 import { FishSummaryCards } from './FishSummaryCards';
 import { GrowthChart } from './GrowthChart';
 import { MortalityTrendChart } from './MortalityTrendChart';
@@ -41,7 +42,7 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
   const [isLoadingMortality, setIsLoadingMortality] = useState(false);
 
   // Delete dialog state
-  const [deleteDialog, setDeleteDialog] = useState<{isOpen: boolean, type: 'stocking'|'mortality', id: string}>({ isOpen: false, type: 'stocking', id: '' });
+  const [deleteDialog, setDeleteDialog] = useState<{isOpen: boolean, type: 'stocking'|'mortality'|'growth', id: string}>({ isOpen: false, type: 'stocking', id: '' });
 
   useEffect(() => {
     if (pondId) {
@@ -91,16 +92,22 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
     setDeleteDialog({ isOpen: true, type: 'mortality', id });
   };
 
+  const handleDeleteGrowth = (id: string) => {
+    setDeleteDialog({ isOpen: true, type: 'growth', id });
+  };
+
   const executeDelete = async () => {
     const { type, id } = deleteDialog;
     if (!id) return;
     try {
       if (type === 'stocking') {
         await fishApi.deleteStocking(id, pondId);
-      } else {
+      } else if (type === 'mortality') {
         await fishApi.deleteMortality(id, pondId);
+      } else if (type === 'growth') {
+        await fishApi.deleteGrowthSample(id, pondId);
       }
-      toast.success("Record deleted");
+      toast.success('Record deleted successfully');
       loadOverview();
       if (type === 'mortality' && activeTab === 'mortality') loadMortalityLogs();
     } catch (err: any) {
@@ -277,6 +284,18 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
                   <BenchmarkComparison growthSummary={overview.growthSummary} />
                 </div>
               </div>
+              <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-white">Growth Samples History</h3>
+                  <p className="text-sm text-slate-400">Log and track fish weight samples</p>
+                </div>
+                <GrowthTable 
+                  samples={overview.growthSummary.samples} 
+                  isLoading={isLoading} 
+                  onEdit={(sample) => { setEditGrowth(sample); setShowGrowthForm(true); }}
+                  onDelete={handleDeleteGrowth}
+                />
+              </div>
             </div>
           )}
         </>
@@ -312,7 +331,7 @@ export const FishTracking: React.FC<FishTrackingProps> = ({ pondId }) => {
 
       <ConfirmDialog
         isOpen={deleteDialog.isOpen}
-        title={deleteDialog.type === 'stocking' ? "Delete Stocking Record" : "Delete Mortality Log"}
+        title={deleteDialog.type === 'stocking' ? "Delete Stocking Record" : deleteDialog.type === 'mortality' ? "Delete Mortality Log" : "Delete Growth Sample"}
         message={`Are you sure you want to delete this ${deleteDialog.type} record? This action cannot be undone.`}
         confirmText="Delete Record"
         onConfirm={executeDelete}

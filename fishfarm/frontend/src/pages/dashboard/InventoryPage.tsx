@@ -56,6 +56,7 @@ export const InventoryPage: React.FC = () => {
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTransactionId, setDeleteTransactionId] = useState<string | null>(null);
   
   // Selected items for modals
   const [selectedItem, setSelectedItem] = useState<EnrichedInventoryItem | null>(null);
@@ -186,6 +187,24 @@ export const InventoryPage: React.FC = () => {
       console.error("Failed to complete maintenance", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteTransaction = (id: string) => {
+    setDeleteTransactionId(id);
+  };
+
+  const confirmDeleteTransaction = async () => {
+    if (!selectedPond || !deleteTransactionId) return;
+    try {
+      await inventoryApi.deleteTransaction(selectedPond.id, deleteTransactionId);
+      loadData();
+      toast.success('Transaction deleted');
+    } catch (error) {
+      console.error("Failed to delete transaction", error);
+      toast.error('Failed to delete transaction');
+    } finally {
+      setDeleteTransactionId(null);
     }
   };
 
@@ -363,7 +382,7 @@ export const InventoryPage: React.FC = () => {
         )}
 
         {activeTab === 'transactions' && (
-          <TransactionHistory transactions={data.recentTransactions} />
+          <TransactionHistory transactions={data.recentTransactions} onDelete={handleDeleteTransaction} />
         )}
 
         {activeTab === 'equipment' && (
@@ -483,10 +502,19 @@ export const InventoryPage: React.FC = () => {
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         title="Delete Inventory Item"
-        message={`Are you sure you want to delete ${selectedItem?.itemName}? This action cannot be undone.`}
+        message="Are you sure you want to deactivate this item? All transaction history will be preserved."
         confirmText="Delete Item"
         onConfirm={handleDeleteItem}
         onCancel={() => setShowDeleteConfirm(false)}
+      />
+
+      <ConfirmDialog
+        isOpen={!!deleteTransactionId}
+        title="Delete Transaction"
+        message="Are you sure you want to delete this transaction? Stock quantities and related expenses will be automatically reversed. This action cannot be undone."
+        confirmText="Delete Transaction"
+        onConfirm={confirmDeleteTransaction}
+        onCancel={() => setDeleteTransactionId(null)}
       />
     </div>
   );

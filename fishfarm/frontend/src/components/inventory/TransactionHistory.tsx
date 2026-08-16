@@ -6,9 +6,10 @@ import { format } from 'date-fns';
 
 interface TransactionHistoryProps {
   transactions: TransactionWithItem[];
+  onDelete?: (id: string) => void;
 }
 
-export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions }) => {
+export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, onDelete }) => {
   if (transactions.length === 0) {
     return (
       <div className="bg-slate-900 rounded-2xl border border-slate-800 p-8 text-center">
@@ -31,6 +32,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transact
               <th className="px-6 py-4 text-right">Quantity</th>
               <th className="px-6 py-4 text-right">Total Cost</th>
               <th className="px-6 py-4">Notes</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800">
@@ -62,6 +64,16 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transact
                   </td>
                   <td className="px-6 py-4 text-slate-400 text-xs">
                     {tx.referenceNote || '-'}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {onDelete && (
+                      <button 
+                        onClick={() => onDelete(tx.id)}
+                        className="text-red-400 hover:text-red-300 font-medium"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               );

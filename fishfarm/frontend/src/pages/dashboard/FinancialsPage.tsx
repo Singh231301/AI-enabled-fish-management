@@ -54,6 +54,7 @@ export const FinancialsPage = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [deleteExpenseId, setDeleteExpenseId] = useState<string | null>(null);
+  const [deleteSaleId, setDeleteSaleId] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentPond) {
@@ -151,6 +152,23 @@ export const FinancialsPage = () => {
       toast.error('Cannot delete this expense (might be auto-generated).');
     } finally {
       setDeleteExpenseId(null);
+    }
+  };
+
+  const handleDeleteSale = (id: string) => {
+    setDeleteSaleId(id);
+  };
+
+  const confirmDeleteSale = async () => {
+    if (!currentPond || !deleteSaleId) return;
+    try {
+      await financialsApi.deleteSale(deleteSaleId, currentPond.id);
+      await loadData();
+      toast.success('Sale deleted');
+    } catch (error) {
+      toast.error('Failed to delete sale');
+    } finally {
+      setDeleteSaleId(null);
     }
   };
 
@@ -402,6 +420,12 @@ export const FinancialsPage = () => {
                                 >
                                   Invoice
                                 </button>
+                                <button 
+                                  onClick={() => handleDeleteSale(sale.id)}
+                                  className="text-red-400 hover:text-red-300"
+                                >
+                                  Delete
+                                </button>
                               </td>
                             </tr>
                           );
@@ -488,6 +512,15 @@ export const FinancialsPage = () => {
         confirmText="Delete Expense"
         onConfirm={confirmDeleteExpense}
         onCancel={() => setDeleteExpenseId(null)}
+      />
+
+      <ConfirmDialog
+        isOpen={!!deleteSaleId}
+        title="Delete Sale"
+        message="Are you sure you want to delete this sale? This action cannot be undone."
+        confirmText="Delete Sale"
+        onConfirm={confirmDeleteSale}
+        onCancel={() => setDeleteSaleId(null)}
       />
 
     </>

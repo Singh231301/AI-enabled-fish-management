@@ -160,4 +160,15 @@ export class InventoryController {
       next(error);
     }
   };
+
+  public deleteTransaction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const pondId = req.query.pondId as string;
+      const { id } = req.params;
+      await this.inventoryService.deleteTransaction(id, pondId, req.user!.id);
+      return sendSuccess(res, null, "Transaction deleted successfully");
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -74,8 +74,25 @@ export const SaleForm: React.FC<SaleFormProps> = ({ initialData, onSubmit, onCan
   
   const balance = (totalAmount || 0) - (advance || 0);
 
+  const handleFormSubmit = (data: SaleFormData) => {
+    const cleanData = { ...data };
+    
+    // Sanitize transportCostKg
+    if (!cleanData.transportIncluded) {
+      delete cleanData.transportCostKg;
+    } else if (cleanData.transportCostKg === '') {
+      cleanData.transportCostKg = 0;
+    }
+
+    // Sanitize advanceReceived and buyerPhone if they are empty strings
+    if (cleanData.advanceReceived === '' as any) cleanData.advanceReceived = 0;
+    if (cleanData.buyerPhone === '') delete cleanData.buyerPhone;
+    
+    onSubmit(cleanData);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1">Sale Date *</label>

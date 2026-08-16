@@ -11,9 +11,9 @@ const baseExpenseSchema = z.object({
     'LABOR', 'FENCING_INFRASTRUCTURE', 'TRANSPORT', 'MISCELLANEOUS'
   ], { errorMap: () => ({ message: "Select a valid expense category" }) }),
   itemName: z.string().min(2, "Item name is required").max(200).trim(),
-  quantity: z.number().positive("Quantity must be positive").optional().nullable(),
+  quantity: z.preprocess((val) => (val === '' || val === null || Number.isNaN(val) ? null : Number(val)), z.number().positive("Quantity must be positive").optional().nullable()),
   unit: z.string().max(50).optional().nullable().transform(val => val === '' ? null : val),
-  unitPrice: z.number().nonnegative("Unit price cannot be negative").optional().nullable(),
+  unitPrice: z.preprocess((val) => (val === '' || val === null || Number.isNaN(val) ? null : Number(val)), z.number().nonnegative("Unit price cannot be negative").optional().nullable()),
   totalAmount: z.number({
     required_error: "Total amount is required",
     invalid_type_error: "Must be a number"
@@ -67,13 +67,13 @@ const baseSaleSchema = z.object({
     required_error: "Total amount is required",
     invalid_type_error: "Must be a number"
   }).positive("Total must be positive"),
-  advanceReceived: z.number().nonnegative("Advance cannot be negative").default(0),
+  advanceReceived: z.preprocess((val) => (val === '' || val === null || Number.isNaN(val) ? 0 : Number(val)), z.number().nonnegative("Advance cannot be negative").default(0)),
   paymentStatus: z.enum(['PENDING', 'PARTIAL', 'COMPLETED']).default('PENDING'),
   paymentMethod: z.enum([
     'CASH', 'UPI', 'BANK_TRANSFER', 'CREDIT', 'OTHER'
   ]).optional().nullable(),
   transportIncluded: z.boolean().default(false),
-  transportCostKg: z.number().nonnegative().optional().nullable(),
+  transportCostKg: z.preprocess((val) => (val === '' || val === null || Number.isNaN(val) ? 0 : Number(val)), z.number({ invalid_type_error: "NEW_CODE_ACTIVE" }).nonnegative()).optional().nullable(),
   notes: z.string().max(500).optional().nullable().transform(val => val === '' ? null : val),
 });
 

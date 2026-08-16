@@ -103,8 +103,12 @@ export class ExpenseRepository extends BaseRepository<Expense> {
       by: ['category'],
       where: {
         pondId,
-        ...(startDate ? { expenseDate: { gte: startDate } } : {}),
-        ...(endDate ? { expenseDate: { lte: endDate } } : {})
+        ...(startDate || endDate ? {
+          expenseDate: {
+            ...(startDate ? { gte: startDate } : {}),
+            ...(endDate ? { lte: endDate } : {})
+          }
+        } : {})
       },
       _sum: { totalAmount: true },
       _count: { id: true },
